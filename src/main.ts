@@ -3,7 +3,15 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import store from './store'
+import '../public/css/global.css';
+import Vuesax from 'vuesax';
+import 'material-icons/iconfont/material-icons.css';
 
+
+import 'vuesax/dist/vuesax.css' //Vuesax styles
+Vue.use(Vuesax, {
+  // options here
+})
 Vue.config.productionTip = false
 
 new Vue({
