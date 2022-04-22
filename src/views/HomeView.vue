@@ -11,7 +11,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import HelloWorld from '@/components/HelloWorld.vue';
-import { httpGet } from '@/services/http'
 
 @Component({
   components: {
@@ -20,15 +19,6 @@ import { httpGet } from '@/services/http'
 })
 export default class HomeView extends Vue {
 
-  async created() {
-    try {
-      const { data } = await httpGet('/users');
 
-      const { content } = data;
-      console.log(content)
-    }catch (err: any) {
-      console.log(err)
-    }
-  }
 }
 </script>

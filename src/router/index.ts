@@ -18,7 +18,17 @@ const routes: Array<RouteConfig> = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/Login.vue'),
+    component: () => import('../views/Auth/Login.vue'),
+  },
+  {
+    path: '/esqueci-senha',
+    name: 'password',
+    component: () => import('@/views/Auth/Password.vue')
+  },
+  {
+    path: '/usuarios/criar',
+    name: 'createUser',
+    component: () => import('@/views/User/CreateUser.vue')
   }
 ]
 
