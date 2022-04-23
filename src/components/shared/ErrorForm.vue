@@ -2,12 +2,11 @@
   <p class="error">{{ error }}</p>
 </template>
 
-<script>
+<script lang="ts">
 import {Component, Vue, Prop} from "vue-property-decorator";
 
 @Component
 export default class ErrorForm extends Vue {
-  // @Prop(String) readonly error: string | undefined;
   @Prop({type: String}) error
 
 }
@@ -17,6 +16,6 @@ export default class ErrorForm extends Vue {
 .error {
   color: red;
   margin-top: 0.35rem;
-  font-size: 0.7em;
+  font-size: 0.9em;
 }
 </style>

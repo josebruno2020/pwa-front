@@ -1,50 +1,24 @@
 <template>
 
-  <div ref="parentSidebar" id="parentx">
+  <vs-navbar type="border" v-model="activeItem" class="nabarx">
 
-    <vs-button @click="active=!active" color="primary" type="filled">Open Sidebar</vs-button>
-    <vs-sidebar :parent="$refs.parentSidebar" default-index="1" color="primary" class="sidebarx" spacer
-                v-model="active">
+    <div slot="title">
+      <vs-navbar-title>
+        Vue.js
+      </vs-navbar-title>
+    </div>
 
-      <div class="header-sidebar" slot="header">
-        <vs-avatar size="70px" src="https://randomuser.me/api/portraits/men/85.jpg"/>
-
-        <h4>
-          My Name
-          <vs-button color="primary" icon="more_horiz" type="flat"></vs-button>
-        </h4>
-
-      </div>
-
-      <vs-sidebar-item index="1" icon="question_answer">
-        Dashboard
-      </vs-sidebar-item>
-
-      <vs-sidebar-item index="2" icon="gavel">
-        History
-      </vs-sidebar-item>
-
-      <vs-divider icon="person" position="left">
-        User
-      </vs-divider>
-
-      <vs-sidebar-item index="3" icon="verified_user">
-        Configurations
-      </vs-sidebar-item>
-      <vs-sidebar-item index="4" icon="account_box">
-        Profile
-      </vs-sidebar-item>
-      <vs-sidebar-item index="5">
-        Card
-      </vs-sidebar-item>
-
-      <div class="footer-sidebar" slot="footer">
-        <vs-button icon="reply" color="danger" type="flat">log out</vs-button>
-        <vs-button icon="settings" color="primary" type="border"></vs-button>
-      </div>
-
-    </vs-sidebar>
-  </div>
+    <vs-navbar-item index="0">
+      <router-link :to="{name: 'home'}">Home</router-link>
+    </vs-navbar-item>
+    <vs-navbar-item index="1">
+      <router-link :to="{name: 'listPatient'}">Pacientes</router-link>
+<!--      <a href="#">Pacientes</a>-->
+    </vs-navbar-item>
+    <vs-navbar-item index="2">
+      <router-link :to="{name: 'listUser'}">Usuários</router-link>
+    </vs-navbar-item>
+  </vs-navbar>
 
 </template>
 
@@ -53,8 +27,9 @@ import {Component, Vue} from "vue-property-decorator";
 
 @Component({})
 
-export class MenuInterface extends Vue {
+export default class MenuInterface extends Vue {
   active = true;
+  activeItem = 0;
 }
 
 

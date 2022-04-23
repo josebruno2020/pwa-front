@@ -1,21 +1,24 @@
-export interface UserInterface {
+export class User {
     name: string;
     email: string;
     user_type: number;
+    password = '';
+    password_confirmation = '';
     birthdate: string;
     number_category: string;
     is_first_access: boolean;
-}
 
-export class User {
-    private name: string;
-    private email: string;
-    private user_type: number;
-    private birthdate: string;
-    private number_category: string;
-    private is_first_access: boolean;
-
-    constructor({name, email, user_type, birthdate, number_category, is_first_access}: UserInterface) {
+    constructor(name = '',
+                email = '',
+                user_type = 1,
+                birthdate = '',
+                number_category = '',
+                is_first_access = true,
+                password = '',
+                password_confirmation = ''
+    ) {
+        this.password = password;
+        this.password_confirmation = password_confirmation;
         this.email = email;
         this.user_type = user_type;
         this.birthdate = birthdate;
