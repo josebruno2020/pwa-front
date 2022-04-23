@@ -146,10 +146,7 @@ export default class CreateUser extends Vue {
 
 <style scoped>
 
-.col {
-  flex-direction: column;
-  margin-bottom: .8rem;
-}
+
 
 .label {
   margin: .3rem 0;

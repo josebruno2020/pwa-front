@@ -46,10 +46,12 @@ export default class LoginView extends Vue {
     try {
       const validate: boolean = await this.$validator.validateAll();
       if (!validate) return;
-      const { data } = await httpPost(apiRoutes.login, this.model);
-      this.$toast.success('Login certo!');
-      console.log(data);
-
+      const { data: {user, access_token} } = await httpPost(apiRoutes.login, this.model);
+      this.$store.commit('SET_STATE', {token: access_token, user: user});
+      if (user.is_first_access) {
+        return this.$router.push({name: 'changePassword'});
+      }
+      return this.$router.push({name: 'home'});
     } catch (err: any) {
       this.$toast.error('E-mail e/ou senha inálido!');
     }

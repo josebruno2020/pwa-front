@@ -4,7 +4,7 @@
     <section class="home">
 
       <img alt="Vue logo" src="../assets/logo.png" class="logo">
-      <p class="text-center">Seja bem-vindo, {nome}</p>
+      <p class="text-center">Seja bem-vindo, {{ loggedName }}</p>
 
       <div class="button">
         <vs-button line-origin="left" icon="done" color="success" :to="{name: 'createPatient'}" type="line">Cadastrar
@@ -27,6 +27,7 @@ import PageTitle from "@/components/shared/PageTitle.vue";
 
 })
 export default class HomeView extends Vue {
+  loggedName = this.$store.state.user.name;
 
 
 }

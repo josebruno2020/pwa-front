@@ -81,7 +81,6 @@ export default class CreateUser extends Vue {
     try {
       const {data} = await httpGet(apiRoutes.users);
       this.users = data.content;
-      console.log(this.users);
     } catch (err: any) {
       console.log(err);
     }

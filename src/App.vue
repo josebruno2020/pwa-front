@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <menu-interface></menu-interface>
+    <menu-interface v-if="logged"></menu-interface>
     <router-view/>
   </div>
 </template>
@@ -8,8 +8,25 @@
 <script lang="ts">
 import MenuInterface from '@/components/ui/Menu.vue'
 export default {
+  data() {
+    return {
+      logged: false
+    }
+  },
   components: {
     MenuInterface
+  },
+  created() {
+    if (this.$store.state.token) {
+      this.logged = true;
+    }
+  },
+  updated() {
+    if (this.$store.state.token) {
+      return this.logged = true;
+    }
+
+    return this.logged = false;
   }
 }
 </script>

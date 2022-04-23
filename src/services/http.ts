@@ -1,4 +1,6 @@
 import axios, {AxiosResponse} from 'axios';
+import store from "@/store";
+import router from "@/router";
 
 const url = process.env.VUE_APP_API_URL;
 
@@ -8,6 +10,28 @@ const http = axios.create({
         'Accept': 'application/json'
     }
 });
+
+http.interceptors.request.use((config) => {
+    const token = store.state.token;
+
+    if (token) {
+        config.headers!.Authorization = `Bearer ${token}`
+    }
+
+    return config
+}, (err) => {
+    return Promise.reject(err)
+})
+
+http.interceptors.response.use((response) => {
+    return response
+}, (error) => {
+    if (error.response.status === 401) {
+        router.push({name: 'login'});
+    }
+
+    return Promise.reject(error)
+})
 
 
 export const httpGet = async (url: string, params?): Promise<AxiosResponse> => {

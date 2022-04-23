@@ -16,6 +16,6 @@ export default class ErrorForm extends Vue {
 .error {
   color: red;
   margin-top: 0.35rem;
-  font-size: 0.9em;
+  font-size: 0.75em;
 }
 </style>

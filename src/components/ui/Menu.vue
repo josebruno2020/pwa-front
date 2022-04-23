@@ -18,6 +18,9 @@
     <vs-navbar-item index="2">
       <router-link :to="{name: 'listUser'}">Usuários</router-link>
     </vs-navbar-item>
+    <vs-navbar-item @click="logout" index="3">
+      <span class="logout" @click="logout">Logout</span>
+    </vs-navbar-item>
   </vs-navbar>
 
 </template>
@@ -30,11 +33,18 @@ import {Component, Vue} from "vue-property-decorator";
 export default class MenuInterface extends Vue {
   active = true;
   activeItem = 0;
+
+  logout() {
+    this.$store.commit('LOGOUT_USER');
+    return this.$router.push({name: 'login'});
+  }
 }
 
 
 </script>
 
 <style scoped>
-
+.logout {
+  color: darkred;
+}
 </style>

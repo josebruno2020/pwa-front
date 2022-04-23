@@ -21,6 +21,11 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/Auth/Login.vue'),
   },
   {
+    path: '/mudar-senha',
+    name: 'changePassword',
+    component: () => import('../views/Auth/ChangePassword.vue'),
+  },
+  {
     path: '/esqueci-senha',
     name: 'password',
     component: () => import('@/views/Auth/Password.vue')
