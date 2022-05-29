@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import MenuInterface from '@/components/ui/Menu.vue'
 export default {
   data() {
