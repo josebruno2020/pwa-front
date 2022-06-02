@@ -1,8 +1,6 @@
-import { ValidationInterface } from "./validation";
+import {requiredMessage} from "@/helpers/validation/validation-helper";
+import CreateUser from "@/views/User/CreateUser.vue";
 
-const requiredMessage = (field: string): string => {
-  return `Campo ${field} é obrigatório`;
-}
 
 export const createUserRules = {
   name: [
@@ -10,14 +8,14 @@ export const createUserRules = {
   ],
 
   birthdate: [
-    { type: 'date', required: true, message: requiredMessage('data de nascimento'), trigger: 'submit' },
+    { required: true, message: requiredMessage('data de nascimento'), trigger: 'submit' },
   ],
 
-  numberCategory: [
+  number_category: [
     { required: true, message: requiredMessage('número de registro'), trigger: 'submit' },
   ],
 
-  userType: [
+  user_type: [
     { required: true, type: 'number', message: requiredMessage('tipo de usuário'), trigger: 'submit' },
   ],
 
@@ -29,8 +27,5 @@ export const createUserRules = {
   password: [
     { required: true, message: requiredMessage('senha'), trigger: 'submit' },
     { min: 4, message: 'Campo senha deve ter no mínimo 4 dígitos', trigger: 'submit' },
-  ]
-
-
-
+  ],
 }
