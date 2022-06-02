@@ -10,6 +10,8 @@ import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import VeeValidate, { Validator } from 'vee-validate';
 import msg from 'vee-validate/dist/locale/pt_BR';
+import * as element from 'element-ui';
+import'element-ui/lib/theme-chalk/index.css';
 
 
 import 'vuesax/dist/vuesax.css' //Vuesax styles
@@ -20,6 +22,8 @@ Vue.use(VueToast, {
 
 Vue.use(VeeValidate);
 Validator.localize('pt_BR', msg);
+
+Vue.use(element)
 
 Vue.config.productionTip = false
 new Vue({

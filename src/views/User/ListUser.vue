@@ -1,61 +1,50 @@
 <template>
-  <main>
+  <main class="container">
     <page-title title="Usuários cadastrados"/>
-    <vs-row class="card" vs-justify="center">
-      <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="11">
-        <vs-card>
-          <div class="card-header" slot="header">
-            <vs-button line-origin="left" icon="done" color="success" :to="{name: 'createUser'}" type="line">Cadastrar novo usuário</vs-button>
+    <el-row :gutter="20" class="row-main">
+      <el-col :span="22">
+        <div class="row-action">
+          <router-link  :to="{name: 'createUser'}" class="router-button">
+            <el-button line-origin="left"  plain type="success">Cadastrar novo usuário</el-button>
+          </router-link>
+        </div>       
+        
 
-          </div>
-          <vs-table  max-items="10" pagination :data="users">
-            <template slot="thead">
-              <vs-th>
-                Nome
-              </vs-th>
-              <vs-th>
-                E-mail
-              </vs-th>
-              <vs-th>
-                Função
-              </vs-th>
-              <vs-th>
-                Ações
-              </vs-th>
-            </template>
-
-            <template slot-scope="{data}">
-              <vs-tr :key="index" v-for="(user, index) in data">
-                <vs-td :data="data[index].name">
-                  {{ data[index].name }}
-                </vs-td>
-
-                <vs-td :data="data[index].email">
-                  {{ data[index].email }}
-                </vs-td>
-
-                <vs-td :data="data[index].user_type">
-                  {{ userTypes.find(u => u.type === data[index].user_type).rol }}
-                </vs-td>
-                <vs-td >
-                  <vs-avatar @click="editUser(data[index].id)" size="small"  color="warning" icon="border_color" />
-                  <vs-button @click="popupActivo=true" color="primary" type="border">Open Default popup</vs-button>
-                </vs-td>
-
-              </vs-tr>
-            </template>
-          </vs-table>
-          <vs-popup class="holamundo"  title="Lorem ipsum dolor sit amet" :active.sync="popupActivo">
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-            </p>
-          </vs-popup>
-
-
-        </vs-card>
-      </vs-col>
-    </vs-row>
+        <el-card shadow="hover">
+        
+          <el-table
+            :data="users"
+            style="width: 100%">
+            <el-table-column
+              prop="name"
+              label="Nome">
+            </el-table-column>
+            <el-table-column
+              prop="email"
+              label="E-mail">
+            </el-table-column>
+            <el-table-column
+              label="Tipo">
+              <template slot-scope="scope">{{ userTypes.find(u => u.type === scope.row.user_type).rol  }}</template>
+            </el-table-column>
+            <el-table-column label="Ações">
+              <template slot-scope="scope">
+              <!-- <router-link> -->
+                <el-button type="warning" circle>
+                  {{ scope.row.id }}
+                  <i class="el-icon-edit"></i>
+                </el-button>
+                <el-button type="danger" circle>
+                  <i class="el-icon-delete"></i>  
+                </el-button>
+              <!-- </router-link> -->
+              
+              </template>
+            </el-table-column>
+          </el-table>
+          </el-card>
+      </el-col>
+    </el-row>
   </main>
 </template>
 
@@ -93,6 +82,16 @@ export default class CreateUser extends Vue {
 </script>
 
 <style scoped>
+.row-main {
+  display: flex;
+  justify-content: center;
+}
+.row-action {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: end;
+}
+
 .card-header {
   display: flex;
   justify-content: end;

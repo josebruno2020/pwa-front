@@ -1,109 +1,66 @@
 <template>
   <main>
     <page-title title="Cadastrar Usuário" />
-    <vs-row class="card" vs-justify="center">
-      <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="10">
-        <vs-card class="card-content">
+    <el-row :gutter="20" class="row-main">
+      <el-col :span="20">
+        <el-card shadow="hover">
           <div slot="header">
-            <h5>
+            <h4>
               Informações básicas
-            </h5>
+            </h4>
           </div>
 
-          <form class="form">
-            <vs-row vs-type="flex" vs-align="center">
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">Nome Completo</label>
-                <vs-input v-validate="'required'"
-                          name="name" type="text"
-                          :color="errors.has('name') ? 'danger' : 'success'"
-                          placeholder="Nome"
-                          v-model="user.name"/>
-                <error-form :error="errors.first('name')"></error-form>
-              </vs-col>
+          <el-form ref="user-form" :model="user"  label-width="120px" :rules="rules"  label-position="top">
+            <el-form-item label="Nome" prop="name">
+              <el-input v-model="user.name"></el-input>               
+            </el-form-item>
 
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">Data de nascimento</label>
-                <vs-input v-validate="'required|date_format:yyyy-MM-dd'"
-                          name="nascimento" type="date"
-                          :color="errors.has('nascimento') ? 'danger' : 'success'"
+            <el-form-item label="Data de Nascimento" prop="birthdate">
+              <el-input type="date" v-model="user.birthdate"></el-input>               
+            </el-form-item>
 
-                          v-model="user.birthdate"/>
-                <error-form :error="errors.first('nascimento')"></error-form>
-              </vs-col>
-
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">Número Registro</label>
-                <vs-input v-validate="'required'"
-                          name="registro" type="text"
-                          :color="errors.has('registro') ? 'danger' : 'success'"
-                          placeholder="Registro"
-                          v-model="user.number_category"/>
-                <error-form :error="errors.first('registro')"></error-form>
-              </vs-col>
-            </vs-row>
+            <el-form-item label="Número Registro" prop="numberCategory">
+              <el-input v-model="user.number_category"></el-input>               
+            </el-form-item>
 
             <div>
               <h4 class="subtitle">
                 Informações de acesso
               </h4>
             </div>
-            <vs-row vs-type="flex" vs-align="center">
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">Tipo de usuário</label>
-                <vs-select
-                    v-model="user.user_type"
-                    name="tipo"
-                    v-validate="'required'"
-                >
-                  <vs-select-item :key="type" :value="type" :text="rol" v-for="{type, rol} in userType"/>
-                </vs-select>
-                <error-form :error="errors.first('tipo')"></error-form>
-              </vs-col>
 
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">E-mail</label>
-                <vs-input v-validate="'required|email'"
-                          name="email" type="email"
-                          :color="errors.has('email') ? 'danger' : 'success'"
-                          placeholder="E-mail"
-                          v-model="user.email"/>
-                <error-form :error="errors.first('email')"></error-form>
-              </vs-col>
+            <el-form-item label="Tipo de Usuário" prop="userType">
+              <el-select v-model="user.user_type" clearable placeholder="selecione...">
+                <el-option
+                  v-for="u in userType"
+                  :key="u.type"
+                  :label="u.rol"
+                  :value="u.type">
+                </el-option>
+              </el-select>
+            </el-form-item>
 
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">Senha de acesso</label>
-                <vs-input v-validate="'required|min:4'"
-                          name="senha" type="password"
-                          :color="errors.has('senha') ? 'danger' : 'success'"
-                          placeholder="Senha de acesso"
-                          v-model="user.password"
-                          ref="senha"/>
-                <error-form :error="errors.first('senha')"></error-form>
-              </vs-col>
+            <el-form-item label="E-mail" prop="email">
+              <el-input v-model="user.email"></el-input>               
+            </el-form-item>
 
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">Confirme a senha de acesso</label>
-                <vs-input v-validate="'required|confirmed:senha'"
-                          name="senha_confirmacao" type="password"
-                          :color="errors.has('senha_confirmacao') ? 'danger' : 'success'"
-                          placeholder="Senha de acesso"
-                          data-vv-as="confirmacao de senha"
-                          v-model="user.password_confirmation"/>
-                <error-form :error="errors.first('senha_confirmacao')"></error-form>
-              </vs-col>
-            </vs-row>
-          </form>
+            <el-form-item label="Senha" prop="password">
+              <el-input type="password" v-model="user.password"></el-input>               
+            </el-form-item>
 
+            <el-form-item label="Confirme sua senha" prop="passwordConfirm">
+              <el-input type="password" v-model="user.password_confirmation"></el-input>               
+            </el-form-item>
+          </el-form>
 
           <div  class="footer">
-            <div class="centerx">
-              <vs-button color="success" icon="done" type="filled" @click="saveUser">Salvar</vs-button>
+            <div class="center">
+              <el-button  type="success" @click="submitForm">Salvar</el-button>
             </div>
           </div>
-        </vs-card>
-      </vs-col>
-    </vs-row>
+        </el-card>
+      </el-col>
+    </el-row>
   </main>
 </template>
 
@@ -115,7 +72,8 @@ import PageTitle from "@/components/shared/PageTitle.vue";
 import {httpPost} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import {userType, userTypeInterface} from "@/enums/userType";
-
+import { VForm } from "@/helpers/VFormType";
+import { createUserRules } from "@/helpers/validation/create-user";
 
 @Component({
   components: {
@@ -124,10 +82,25 @@ import {userType, userTypeInterface} from "@/enums/userType";
   }
 })
 export default class CreateUser extends Vue {
+  $refs!: {
+    form: VForm
+  }
   user: User = new User();
   userType: userTypeInterface[] = userType;
+  loading = false;
+  rules = createUserRules
+
+  async submitForm() {
+    console.log(this.user);
+    
+    await this.$refs['user-form'].validate((valid: boolean) => {
+      if (valid) return this.saveUser();
+    });
+  }
 
   async saveUser() {
+    
+    
     try {
       const validator: boolean = await this.$validator.validateAll();
       if (!validator) return;
@@ -144,19 +117,35 @@ export default class CreateUser extends Vue {
 }
 </script>
 
-<style scoped>
+<style lang="sass">
+
+.row-main 
+  width: 100vw
+  display: flex
+  justify-content: center
+  margin: 0 !important
+
+.el-card
+  margin-top: .5rem
 
 
 
-.label {
-  margin: .3rem 0;
-}
+label 
+  padding-bottom: 0 !important
+  width: auto
+.el-select 
+  width: 100%
+  
 
-.subtitle {
-  margin: 1rem 0;
-}
+.subtitle
+  padding: .8rem 0
 
-.footer {
-  padding-top: .2rem;
-}
+
+.footer 
+  padding-top: 1rem
+  .center
+    display: flex
+    justify-content: center
+
+
 </style>

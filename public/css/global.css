@@ -11,6 +11,10 @@ h2, h3, h5, h4 {
     color: #247C1DFF;
 }
 
+.el-form-item label {
+    padding: 0;
+}
+
 .card {
     margin-top: 1.5rem;
 }
@@ -23,7 +27,7 @@ h2, h3, h5, h4 {
     font-size: .9rem;
 }
 
-.col {
+/* .col {
     flex-direction: column;
     margin-bottom: .8rem;
-}
+} */
