@@ -14,7 +14,7 @@
         </el-form-item>
 
         <div class="submit-row">
-          <el-button native-type="submit" type="success">Entrar</el-button>
+          <el-button :loading="loading" native-type="submit" type="success">Entrar</el-button>
         </div>
       </el-form>
 

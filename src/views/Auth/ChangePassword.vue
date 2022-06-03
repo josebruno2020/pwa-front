@@ -2,50 +2,32 @@
   <main>
     <page-title title="Mudar a senha"/>
 
-    <vs-row class="card" vs-justify="center">
-      <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="10">
-        <vs-card class="card-content">
+    <el-row :gutter="20" class="row-main">
+      <el-col :span="20">
+        <el-card class="card" shadow="hover">
           <div slot="header">
             <h5>
               Para sua segurança, é necessário mudar a senha no primeiro acesso!
             </h5>
           </div>
 
-          <form>
-            <vs-row vs-type="flex" vs-align="center">
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">Nova senha</label>
-                <vs-input v-validate="'required|min:4'"
-                          name="senha" type="password"
-                          :color="errors.has('senha') ? 'danger' : 'success'"
-                          placeholder="Senha"
-                          v-model="model.password"
-                          ref="senha"/>
-                <error-form :error="errors.first('senha')"></error-form>
-              </vs-col>
+          <el-form @submit.native.prevent="validationForm" ref="password-form" :model="model" label-width="120px"
+                   :rules="rules" label-position="top">
+            <el-form-item label="Nova Senha" prop="password">
+              <el-input type="password" v-model="model.password"></el-input>
+            </el-form-item>
 
-              <vs-col class="col" vs-col vs-type="flex" vs-justify="center" vs-lg="3" vs-sm="4" vs-xs="12">
-                <label class="label">Confirme a nova senha</label>
-                <vs-input v-validate="'required|confirmed:senha'"
-                          name="confirmarcao_senha" type="password"
-                          :color="errors.has('confirmarcao_senha') ? 'danger' : 'success'"
-                          placeholder="Confirmação de senha"
-                          data-vv-as="confirmacao de senha"
-                          v-model="model.password_confirmation"/>
-                <error-form :error="errors.first('confirmarcao_senha')"></error-form>
-              </vs-col>
-            </vs-row>
-          </form>
+            <el-form-item label="Confirme sua nova senha" prop="password_confirmation">
+              <el-input type="password" v-model="model.password_confirmation"></el-input>
+            </el-form-item>
 
-
-          <div class="footer">
-            <div class="centerx">
-              <vs-button color="success" icon="done" type="filled" @click="changePassword">Salvar</vs-button>
+            <div class="footer">
+              <el-button :loading="loading" native-type="submit" type="success">Salvar</el-button>
             </div>
-          </div>
-        </vs-card>
-      </vs-col>
-    </vs-row>
+          </el-form>
+        </el-card>
+      </el-col>
+    </el-row>
 
   </main>
 </template>
@@ -58,6 +40,8 @@ import PageTitle from "@/components/shared/PageTitle.vue";
 import ErrorForm from "@/components/shared/ErrorForm.vue";
 import {httpPost} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
+import {VForm} from "@/helpers/VFormType";
+import {changePasswordRules} from "@/helpers/validation/change-password";
 
 @Component({
   components: {
@@ -66,23 +50,71 @@ import {apiRoutes} from "@/services/apiRoutes";
   }
 })
 export default class ChangePassword extends Vue {
+  $refs!: {
+    form: VForm
+  }
   model: ChangePasswordModel = new ChangePasswordModel();
   userId = this.$store.state.user.id;
+  loading = false
+
+  validateConfirmPassword = (rule, value, callback) => {
+    if (value === '') {
+      callback(new Error('Please input the password again'));
+    } else if (value !== this.model.password) {
+      callback(new Error('Two inputs don\'t match!'));
+    } else {
+      callback();
+    }
+  }
+
+  rules = {
+    ...changePasswordRules,
+    password_confirmation: [
+      {required: true, validator: this.validateConfirmPassword, message: 'As senhas não são iguais', trigger: 'submit'},
+    ]
+  }
+
+  async validationForm() {
+    await this.$refs['password-form'].validate((valid: boolean) => {
+      if (valid) {
+        this.loading = true
+        return this.changePassword();
+      }
+    });
+  }
 
   async changePassword() {
-    const validate: boolean = await this.$validator.validateAll();
-    if (!validate) return;
     try {
       await httpPost(`${apiRoutes.changePassword}/${this.userId}`, this.model);
-      this.$toast.success('Nova senha salva com sucesso!');
+      this.$notify.success({
+        title: 'Sucesso!',
+        message: 'Nova senha salva com sucesso!'
+      })
       return this.$router.push({name: 'home'});
     } catch (err: any) {
-      this.$toast.error('Não foi possivel mudar a senha. Tente novamente mais tarde!');
+      this.$notify.error({
+        title: 'Erro!',
+        message: 'Não foi possivel mudar a senha. Tente novamente mais tarde!'
+      })
+    } finally {
+      this.loading = false;
     }
   }
 }
 </script>
 
-<style scoped>
+<style lang="sass">
+.row-main
+  width: 100vw
+  display: flex
+  justify-content: center
+  margin: 0 !important
+
+.card
+  margin-top: .8rem
+
+.footer
+  display: flex
+  justify-content: center
 
 </style>

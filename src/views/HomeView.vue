@@ -7,9 +7,11 @@
       <p class="text-center">Seja bem-vindo, {{ loggedName }}</p>
 
       <div class="button">
-        <vs-button line-origin="left" icon="done" color="success" :to="{name: 'createPatient'}" type="line">Cadastrar
-          novo paciente
-        </vs-button>
+        <router-link :to="{name: 'createPatient'}">
+          <el-button type="success" plain>Cadastrar
+            novo paciente
+          </el-button>
+        </router-link>
       </div>
 
     </section>
@@ -33,21 +35,20 @@ export default class HomeView extends Vue {
 }
 </script>
 
-<style scoped>
-.home {
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+<style lang="sass">
+.home
+  min-height: 80vh
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
 
-.logo {
-  margin-bottom: 1rem;
-}
 
-.button {
-  margin-top: 2rem;
-}
+.logo
+  margin-bottom: 1rem
+
+.button
+  margin-top: 2rem
+
 
 </style>

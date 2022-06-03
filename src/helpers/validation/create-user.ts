@@ -1,4 +1,4 @@
-import {requiredMessage} from "@/helpers/validation/validation-helper";
+import {emailValidation, passwordValidation, requiredMessage} from "@/helpers/validation/validation-helper";
 
 
 export const createUserRules = {
@@ -18,13 +18,7 @@ export const createUserRules = {
     { required: true, type: 'number', message: requiredMessage('tipo de usuário'), trigger: 'submit' },
   ],
 
-  email: [
-    { required: true, message: requiredMessage('e-mail'), trigger: 'submit' },
-    { type:'email', message: 'Campo e-mail deve ser um e-mail válido', trigger: 'submit' },
-  ],
+  email: emailValidation(),
 
-  password: [
-    { required: true, message: requiredMessage('senha'), trigger: 'submit' },
-    { min: 4, message: 'Campo senha deve ter no mínimo 4 dígitos', trigger: 'submit' },
-  ],
+  password: passwordValidation()
 }

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <menu-interface v-if="logged"></menu-interface>
-    <router-view/>
+    <menu-interface class="menu" v-if="logged"></menu-interface>
+    <router-view class="page-view"/>
   </div>
 </template>
 
@@ -31,21 +31,16 @@ export default {
 }
 </script>
 
-<style>
-#app {
+<style lang="sass">
 
-}
 
-nav {
-  padding: 30px;
-}
+//#app
+//  display: flex
+//  min-height: 100vh
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
+.page-view
+  width: 100%
+
+
 </style>
