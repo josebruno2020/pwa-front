@@ -1,5 +1,4 @@
 import {requiredMessage} from "@/helpers/validation/validation-helper";
-import CreateUser from "@/views/User/CreateUser.vue";
 
 
 export const createUserRules = {

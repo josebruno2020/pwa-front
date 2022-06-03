@@ -2,22 +2,21 @@
   <main>
     <img alt="Vue logo" src="../../assets/logo.png" class="logo">
     <p class="text-center">Informe suas credenciais para continuar</p>
-    <div class="form">
-      <form class="login-form w-100 d-flex center">
-        <div class="centerx">
-          <vs-input v-validate="'required'" name="email" type="email" :color="errors.has('email') ? 'danger' : 'success'" label-placeholder="E-mail"
-                    v-model="model.email"/>
-          <error-form  :error="errors.first('email')"></error-form>
-        </div>
-        <div class="centerx">
-          <vs-input v-validate="'required'" name="senha" color="success" label-placeholder="Senha" type="password" v-model="model.password"/>
-          <error-form :error="errors.first('senha')"></error-form>
-        </div>
+    <div class="login-form">
+      <el-form class="form" ref="login-form" :model="model" :rules="rules" label-width="120px" label-position="top"
+               @submit.native.prevent="validateForm">
+        <el-form-item label="E-mail" prop="email">
+          <el-input v-model="model.email"></el-input>
+        </el-form-item>
 
-        <div class="centerx">
-          <vs-button color="success" type="filled" @click="login">Entrar</vs-button>
+        <el-form-item label="Senha" prop="password">
+          <el-input type="password" v-model="model.password"></el-input>
+        </el-form-item>
+
+        <div class="submit-row">
+          <el-button native-type="submit" type="success">Entrar</el-button>
         </div>
-      </form>
+      </el-form>
 
 
     </div>
@@ -32,6 +31,8 @@ import {Login} from "@/models/Login";
 import {httpPost} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import ErrorForm from '@/components/shared/ErrorForm.vue';
+import {VForm} from "@/helpers/VFormType";
+import {loginRules} from "@/helpers/validation/login";
 
 @Component({
   components: {
@@ -39,21 +40,35 @@ import ErrorForm from '@/components/shared/ErrorForm.vue';
   }
 })
 export default class LoginView extends Vue {
+  $refs!: {
+    form: VForm
+  }
+  loading = false
   model: Login = new Login();
+  rules = loginRules
 
+  async validateForm() {
+    await this.$refs['login-form'].validate((valid: boolean) => {
+      if (valid) return this.login();
+    });
+  }
 
   async login() {
+    this.loading = true
     try {
-      const validate: boolean = await this.$validator.validateAll();
-      if (!validate) return;
-      const { data: {user, access_token} } = await httpPost(apiRoutes.login, this.model);
+      const {data: {user, access_token}} = await httpPost(apiRoutes.login, this.model);
       this.$store.commit('SET_STATE', {token: access_token, user: user});
       if (user.is_first_access) {
         return this.$router.push({name: 'changePassword'});
       }
       return this.$router.push({name: 'home'});
     } catch (err: any) {
-      this.$toast.error('E-mail e/ou senha inálido!');
+      this.$notify.error({
+        title: 'Erro!',
+        message: 'E-mail e/ou senha inálido!'
+      });
+    } finally {
+      this.loading = false
     }
   }
 }
@@ -72,9 +87,6 @@ main {
 .logo {
   margin-bottom: 3rem;
   max-width: 10rem;
-}
-.text-center {
-  text-align: center;
 }
 
 .form {
@@ -95,8 +107,9 @@ main {
   align-items: center;
 }
 
-.centerx {
-  margin-top: 1.1rem;
+.submit-row {
+  display: flex;
+  justify-content: center;
 }
 
 button {
