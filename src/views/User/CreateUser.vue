@@ -136,35 +136,4 @@ export default class CreateUser extends Vue {
 </script>
 
 <style lang="sass">
-
-.row-main
-  width: 100vw
-  display: flex
-  justify-content: center
-  margin: 0 !important
-
-.el-card
-  margin-top: .5rem
-
-
-label
-  padding-bottom: 0 !important
-  width: auto
-
-.el-select
-  width: 100%
-
-
-.subtitle
-  padding: .8rem 0
-
-
-.footer
-  padding-top: 1rem
-
-  .center
-    display: flex
-    justify-content: center
-
-
 </style>

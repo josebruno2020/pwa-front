@@ -28,10 +28,16 @@
           <el-menu-item index="1-2" @click="toRoute('createPatient')">Cadastro</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="4" disabled>
-        <i class="el-icon-document"></i>
-        <span slot="title">Navigator Three</span>
-      </el-menu-item>
+      <el-submenu index="4">
+        <template slot="title">
+          <i class="el-icon-user-solid"></i>
+          <span slot="title">Relatórios</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="1-1" @click="toRoute('reportNurse')">Enfermagem</el-menu-item>
+          <el-menu-item index="1-2">Médica</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
       <el-menu-item index="5">
         <i class="el-icon-setting"></i>
         <span slot="title">Navigator Four</span>

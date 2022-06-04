@@ -87,9 +87,6 @@
             </div>
 
           </el-form>
-
-
-
         </el-card>
       </el-col>
     </el-row>
@@ -101,7 +98,6 @@ import {Vue} from "vue-property-decorator";
 import Component from "vue-class-component";
 import PageTitle from "@/components/shared/PageTitle.vue";
 import {Patient} from "@/models/Patient";
-import ErrorForm from "@/components/shared/ErrorForm.vue";
 import {httpPost} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import {VForm} from "@/helpers/VFormType";
@@ -110,7 +106,6 @@ import {createPatientRules} from "@/helpers/validation/create-patient";
 @Component({
   components: {
     PageTitle,
-    ErrorForm
   }
 })
 export default class CreatePatient extends Vue {

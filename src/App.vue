@@ -22,7 +22,7 @@ export default {
     }
   },
   updated() {
-    this.disabledMenu();
+    // this.disabledMenu();
     if (this.$store.state.token) {
       return this.logged = true;
     }
@@ -42,5 +42,34 @@ export default {
 <style lang="sass">
 .page-view
   width: 100%
+
+.row-main
+  width: 100vw
+  display: flex
+  justify-content: center
+  margin: 0 !important
+
+.el-card
+  margin-top: .5rem
+
+
+label
+  padding-bottom: 0 !important
+  width: auto
+
+.el-select
+  width: 100%
+
+
+.subtitle
+  padding: .8rem 0
+
+
+.footer
+  padding-top: 1rem
+
+  .center
+    display: flex
+    justify-content: center
 
 </style>

@@ -49,6 +49,18 @@ const routes: Array<RouteConfig> = [
     path: '/pacientes/criar',
     name: 'createPatient',
     component: () => import('@/views/Patient/CreatePatient.vue')
+  },
+
+  {
+    path: '/pacientes/doencas',
+    name: 'existentSickness',
+    component: () => import('@/views/Patient/ExistentSickness.vue')
+  },
+
+  {
+    path: '/relatorio/enfermeira',
+    name: 'reportNurse',
+    component: () => import('@/views/Report/NurseReport.vue')
   }
 ]
 
