@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <menu-interface class="menu" v-if="logged"></menu-interface>
+    <menu-interface ref="menu" class="menu" v-if="logged"></menu-interface>
     <router-view class="page-view"/>
   </div>
 </template>
@@ -22,25 +22,25 @@ export default {
     }
   },
   updated() {
+    this.disabledMenu();
     if (this.$store.state.token) {
       return this.logged = true;
     }
-
     return this.logged = false;
+  },
+
+  methods: {
+    disabledMenu () {
+      return this.$refs.menu.showMenu = false
+    }
   }
+
+
 }
 </script>
 
 <style lang="sass">
-
-
-//#app
-//  display: flex
-//  min-height: 100vh
-
-
 .page-view
   width: 100%
-
 
 </style>

@@ -15,8 +15,8 @@ export class Patient {
     complement = '';
     neighborhood = '';
     city = '';
+    state = ''
     constructor(
-        id = '',
         name = '',
         birthdate = '',
         name_mother = '',
@@ -31,7 +31,8 @@ export class Patient {
         number = '',
         complement = '',
         neighborhood = '',
-        city = ''
+        city = '',
+        state = ''
     ) {
         this.name = name;
         this.birthdate = birthdate;
@@ -48,7 +49,6 @@ export class Patient {
         this.complement = complement;
         this.neighborhood = neighborhood;
         this.city = city;
-        this.id = id;
-
+        this.state = state;
     }
 }

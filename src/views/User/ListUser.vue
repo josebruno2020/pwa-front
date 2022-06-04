@@ -11,8 +11,8 @@
         
 
         <el-card shadow="hover">
-        
           <el-table
+            v-loading="loading"
             :data="users"
             style="width: 100%">
             <el-table-column
@@ -64,14 +64,16 @@ import {userType, userTypeInterface} from "@/enums/userType";
 export default class CreateUser extends Vue {
   users: User[] = [];
   userTypes: userTypeInterface[] = userType;
-  popupActivo = false;
+  loading = true
 
   async created() {
     try {
-      const {data} = await httpGet(apiRoutes.users);
-      this.users = data.content;
+      const {data: {content}} = await httpGet(apiRoutes.users);
+      this.users = content;
     } catch (err: any) {
       console.log(err);
+    } finally {
+      this.loading = false;
     }
   }
 

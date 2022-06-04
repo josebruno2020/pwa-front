@@ -18,10 +18,16 @@
           <el-menu-item index="1-2" @click="toRoute('createUser')">Cadastro</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="3">
-        <i class="el-icon-menu"></i>
-        <span slot="title">Navigator Two</span>
-      </el-menu-item>
+      <el-submenu index="3">
+        <template slot="title">
+          <i class="el-icon-user-solid"></i>
+          <span slot="title">Pacientes</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="1-1" @click="toRoute('listPatient')">Listagem</el-menu-item>
+          <el-menu-item index="1-2" @click="toRoute('createPatient')">Cadastro</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
       <el-menu-item index="4" disabled>
         <i class="el-icon-document"></i>
         <span slot="title">Navigator Three</span>
@@ -36,7 +42,7 @@
         <span slot="title">Logout</span>
       </el-menu-item>
 
-      <el-menu-item  index="5" @click="showMenu = false">
+      <el-menu-item index="5" @click="showMenu = false">
         <i class="el-icon-setting"></i>
         <span slot="title">Fechar</span>
       </el-menu-item>
@@ -86,7 +92,7 @@ export default class MenuInterface extends Vue {
   position: absolute
   top: 0
   left: 0
-  //transition: 2s all
+//transition: 2s all
 
 
 
