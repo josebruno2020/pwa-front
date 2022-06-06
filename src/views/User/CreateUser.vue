@@ -10,7 +10,7 @@
             </h4>
           </div>
 
-          <el-form ref="user-form" :model="user" label-width="120px" :rules="rules" label-position="top">
+          <el-form ref="user-form" :model="user" :rules="rules" label-position="top">
             <el-form-item label="Nome" prop="name">
               <el-input v-model="user.name"></el-input>
             </el-form-item>
@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import {Vue, Component} from "vue-property-decorator";
-import {User} from "@/models/User";
+import {UserModel} from "@/models/UserModel";
 import ErrorForm from "@/components/shared/ErrorForm.vue";
 import PageTitle from "@/components/shared/PageTitle.vue";
 import {httpPost} from "@/services/http";
@@ -86,7 +86,7 @@ export default class CreateUser extends Vue {
   $refs!: {
     form: VForm
   }
-  user: User = new User()
+  user: UserModel = new UserModel()
   userType: userTypeInterface[] = userType;
   loading = false;
   validatePass2 = (rule, value, callback) => {
@@ -106,6 +106,7 @@ export default class CreateUser extends Vue {
   }
 
   async submitForm() {
+    console.log(this.user)
     await this.$refs['user-form'].validate((valid: boolean) => {
       if (valid) return this.saveUser();
     });

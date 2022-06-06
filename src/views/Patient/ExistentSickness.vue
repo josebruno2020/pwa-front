@@ -45,7 +45,7 @@
 import Component from "vue-class-component";
 import {Vue} from "vue-property-decorator";
 import PageTitle from "@/components/shared/PageTitle.vue";
-import {PreExistentSickness} from "@/models/PreExistentSickness";
+import {PreExistentSicknessModel} from "@/models/PreExistentSicknessModel";
 import {VForm} from "@/helpers/VFormType";
 import {httpPost} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
@@ -62,7 +62,7 @@ export default class ExistentSickness extends Vue {
   $refs!: {
     form: VForm
   }
-  model: PreExistentSickness = new PreExistentSickness()
+  model: PreExistentSicknessModel = new PreExistentSicknessModel()
   loading = false
   rules = existentSicknessRules
 

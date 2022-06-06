@@ -1,4 +1,4 @@
-export class PreExistentSickness {
+export class PreExistentSicknessModel {
     sickness = [];
     others = '';
     constructor(

@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {Login} from "@/models/Login";
+import {LoginModel} from "@/models/LoginModel";
 import {httpPost} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import ErrorForm from '@/components/shared/ErrorForm.vue';
@@ -44,7 +44,7 @@ export default class LoginView extends Vue {
     form: VForm
   }
   loading = false
-  model: Login = new Login();
+  model: LoginModel = new LoginModel();
   rules = loginRules
 
   async validateForm() {

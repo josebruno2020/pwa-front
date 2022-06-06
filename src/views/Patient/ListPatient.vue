@@ -47,7 +47,7 @@
 import {Vue} from "vue-property-decorator";
 import Component from "vue-class-component";
 import PageTitle from "@/components/shared/PageTitle.vue";
-import {Patient} from "@/models/Patient";
+import {PatientModel} from "@/models/PatientModel";
 import {httpGet} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 
@@ -57,7 +57,7 @@ import {apiRoutes} from "@/services/apiRoutes";
   }
 })
 export default class ListPatient extends Vue {
-  patients: Patient[] = []
+  patients: PatientModel[] = []
   loading = true
 
   async created() {

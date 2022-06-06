@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {User} from "@/models/User";
+import {UserModel} from "@/models/UserModel";
 import {httpGet} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import PageTitle from "@/components/shared/PageTitle.vue";
@@ -62,7 +62,7 @@ import {userType, userTypeInterface} from "@/enums/userType";
   }
 })
 export default class CreateUser extends Vue {
-  users: User[] = [];
+  users: UserModel[] = [];
   userTypes: userTypeInterface[] = userType;
   loading = true
 

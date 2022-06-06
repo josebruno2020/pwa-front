@@ -39,8 +39,15 @@
               <el-input v-model="patient.from_city"></el-input>
             </el-form-item>
 
-            <el-form-item label="Estado de origem" prop="from_state">
-              <el-input v-model="patient.from_state"></el-input>
+            <el-form-item label="Estado" prop="from_state">
+              <el-select v-model="patient.from_state" clearable placeholder="selecione..." filterable>
+                <el-option
+                    v-for="state in states"
+                    :key="state.value"
+                    :label="state.label"
+                    :value="state.value">
+                </el-option>
+              </el-select>
             </el-form-item>
 
             <el-form-item label="Telefone" prop="phone_number">
@@ -77,7 +84,14 @@
             </el-form-item>
 
             <el-form-item label="Estado" prop="state">
-              <el-input v-model="patient.state"></el-input>
+              <el-select v-model="patient.state" clearable placeholder="selecione..." filterable>
+                <el-option
+                    v-for="state in states"
+                    :key="state.value"
+                    :label="state.label"
+                    :value="state.value">
+                </el-option>
+              </el-select>
             </el-form-item>
 
 
@@ -97,11 +111,12 @@
 import {Vue} from "vue-property-decorator";
 import Component from "vue-class-component";
 import PageTitle from "@/components/shared/PageTitle.vue";
-import {Patient} from "@/models/Patient";
+import {PatientModel} from "@/models/PatientModel";
 import {httpPost} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import {VForm} from "@/helpers/VFormType";
 import {createPatientRules} from "@/helpers/validation/create-patient";
+import {states} from "@/helpers/form/states";
 
 @Component({
   components: {
@@ -113,8 +128,9 @@ export default class CreatePatient extends Vue {
     form: VForm
   }
   rules = createPatientRules
-  patient: Patient = new Patient();
+  patient: PatientModel = new PatientModel();
   loading = false
+  states = states
 
   async submitForm() {
     await this.$refs['patient-form'].validate((valid: boolean) => {

@@ -56,11 +56,15 @@ const routes: Array<RouteConfig> = [
     name: 'existentSickness',
     component: () => import('@/views/Patient/ExistentSickness.vue')
   },
-
   {
     path: '/relatorio/enfermeira',
     name: 'reportNurse',
     component: () => import('@/views/Report/NurseReport.vue')
+  },
+  {
+    path: '/relatorio/doutor',
+    name: 'reportDoctor',
+    component: () => import('@/views/Report/DoctorReport.vue')
   }
 ]
 
