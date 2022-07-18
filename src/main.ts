@@ -4,24 +4,14 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import '../public/css/global.css';
-import Vuesax from 'vuesax';
 import 'material-icons/iconfont/material-icons.css';
-import VueToast from 'vue-toast-notification';
-import 'vue-toast-notification/dist/theme-sugar.css';
-import VeeValidate, { Validator } from 'vee-validate';
-import msg from 'vee-validate/dist/locale/pt_BR';
 import * as element from 'element-ui';
 import'element-ui/lib/theme-chalk/index.css';
+import VueTheMask from 'vue-the-mask'
 
 
-import 'vuesax/dist/vuesax.css' //Vuesax styles
-Vue.use(Vuesax, {})
-Vue.use(VueToast, {
-  position: 'top'
-});
+Vue.use(VueTheMask)
 
-Vue.use(VeeValidate);
-Validator.localize('pt_BR', msg);
 
 Vue.use(element)
 

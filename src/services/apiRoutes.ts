@@ -4,5 +4,7 @@ export const apiRoutes = {
   users: '/users',
   patients: '/patients',
   sickness: '/sickness',
-  nurseReport: '/reports/nurse'
+  nurseReport: '/reports/nurse',
+  doctorReport: '/reports/doctor',
+  vitalSign: '/vital-signs'
 };

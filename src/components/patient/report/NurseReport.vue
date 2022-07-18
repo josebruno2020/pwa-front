@@ -2,7 +2,7 @@
   <main>
     <el-form @submit.native.prevent="submitForm" ref="sickness-form" :model="model" label-width="120px"
              label-position="top">
-<!--      <p>Paciente: <strong>{{ patientName }}</strong></p>-->
+      <p>Paciente: <strong>{{ patient.name }}</strong></p>
       <el-form-item label="Preencha o relatório para o paciente" prop="sickness">
         <el-input
             type="textarea"
@@ -22,9 +22,7 @@
 
 <script lang="ts">
 
-import {Vue} from "vue-property-decorator";
-import Component from "vue-class-component";
-import PageTitle from "@/components/shared/PageTitle.vue";
+import {Component, Vue} from "vue-property-decorator";
 import {NurseReportModel} from "@/models/NurseReportModel";
 import {VForm} from "@/helpers/VFormType";
 import {httpPost} from "@/services/http";
@@ -32,9 +30,7 @@ import {apiRoutes} from "@/services/apiRoutes";
 import {PatientModel} from "@/models/PatientModel";
 
 @Component({
-  components: {
-    PageTitle
-  }
+  name: 'NurseReport'
 })
 export default class NurseReport extends Vue {
   $refs!: {
@@ -42,16 +38,13 @@ export default class NurseReport extends Vue {
   }
   model: NurseReportModel = new NurseReportModel();
   loading = false
-  patientId: string|number
-  patientName: string
+  patient: PatientModel = new PatientModel()
 
   setInformation(patient: PatientModel) {
-    this.patientId = patient.id;
-    this.patientName = patient.name
+    this.patient = patient
   }
 
   submitForm() {
-    console.log(this.patientId)
     if (!this.model.report) {
       return this.$notify.warning({
         title: 'Atenção.',
@@ -64,7 +57,7 @@ export default class NurseReport extends Vue {
 
   async save() {
     try {
-      const {data} = await httpPost(apiRoutes.nurseReport, {...this.model, patient_id: this.patientId});
+      const {data} = await httpPost(apiRoutes.nurseReport, {...this.model, patient_id: this.patient.id});
       console.log(data)
       this.$notify.success({
         title: 'Sucesso!',

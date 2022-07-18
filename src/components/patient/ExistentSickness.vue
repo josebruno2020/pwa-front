@@ -8,6 +8,7 @@
           <el-checkbox label="HAS"></el-checkbox>
           <el-checkbox label="TABAGISTA"></el-checkbox>
           <el-checkbox label="ETILISTA"></el-checkbox>
+          <el-checkbox label="DEPENDENTE QUÍMICO"></el-checkbox>
         </el-checkbox-group>
       </el-form-item>
 

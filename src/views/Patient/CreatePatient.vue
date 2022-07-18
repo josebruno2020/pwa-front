@@ -124,7 +124,7 @@ import {apiRoutes} from "@/services/apiRoutes";
 import {VForm} from "@/helpers/VFormType";
 import {createPatientRules} from "@/helpers/validation/create-patient";
 import {states} from "@/helpers/form/states";
-import ExistentSickness from "@/views/Patient/ExistentSickness.vue";
+import ExistentSickness from "@/components/patient/ExistentSickness.vue";
 
 @Component({
   components: {
@@ -154,8 +154,6 @@ export default class CreatePatient extends Vue {
 
   async savePatient() {
     try {
-      const validator: boolean = await this.$validator.validateAll();
-      if (!validator) return;
       const {data: {content}} = await httpPost(apiRoutes.patients, this.patient);
       this.$notify.success({
         title: 'Sucesso!',

@@ -25,9 +25,11 @@
             <el-table-column label="Ações">
               <template slot-scope="scope">
                 <el-button @click="showPatient(scope.row)" type="warning" circle>
-                  <i class="el-icon-edit"></i>
+                  <el-tooltip class="item" effect="dark" content="Ver informações e ações do cliente" placement="top-start">
+                    <i class="el-icon-circle-plus"></i>
+                  </el-tooltip>
                 </el-button>
-                <el-button type="danger" circle>
+                <el-button type="danger" @click="confirmDeletePatient(scope.row.id)" circle>
                   <i class="el-icon-delete"></i>
                 </el-button>
 
@@ -39,27 +41,61 @@
     </el-row>
 
     <el-dialog
-        :visible.sync="showPatientModal"
-        width="90%">
-      <h2 class="mt-4">Infomações do Paciente</h2>
-      <el-row :gutter="20" class="row-patient">
-        <p>Nome: {{ patient.name }}</p>
-        <p>Nome da Mãe: {{ patient.name_mother }}</p>
-      </el-row>
+        :fullscreen="true"
+        :visible.sync="showPatientModal">
+      <h1>Infomações do Paciente</h1>
+      <show-patient ref="showPatientModal"/>
 
-      <h2 class="mt-4">Infomações</h2>
-      <h2 class="mt-4">Ações</h2>
+      <h1 class="patient-title">Históricos</h1>
+      <el-button type="light" @click="openSicknessModal(patient)" plain>Doenças pré-existentes</el-button>
+      <el-button type="light" @click="openNurseReportHistory(patient)" plain>Histórico de Enfermagem</el-button>
+      <el-button type="light" @click="openDoctorReportHistory(patient)" plain>Histórico Médico</el-button>
+
+
+      <h1 class="patient-title">Ações</h1>
 
       <el-button type="success" @click="openNurseReport(patient)" plain>Relatório de Enfermagem</el-button>
-      <el-button type="success" plain>Relatório Médico</el-button>
+      <el-button type="success" @click="openDoctorReport(patient)" plain>Relatório Médico</el-button>
+      <el-button type="success" @click="openVitalSignsModal(patient)" plain>Sinais Vitais</el-button>
+    </el-dialog>
+
+    <el-dialog
+        title="Histórico de Relatório de Enfermagem"
+        :visible.sync="showNurseReportHistoryModal"
+        width="90%">
+      <history-nurse-report ref="nurseReportHistoryModal"/>
+    </el-dialog>
+    <el-dialog
+        title="Histórico de Relatório Médico"
+        :visible.sync="showDoctorReportHistoryModal"
+        width="90%">
+      <history-doctor-report ref="doctorReportHistoryModal"/>
     </el-dialog>
     <el-dialog
         title="Relatório de Enfermagem"
         :visible.sync="showNurseReportModal"
         width="90%">
-    <nurse-report ref="nurseReportModal"/>
+      <nurse-report ref="nurseReportModal" @submit="showNurseReportModal = false"/>
+    </el-dialog>
+    <el-dialog
+        title="Relatório Médico"
+        :visible.sync="showDoctorReportModal"
+        width="90%">
+      <doctor-report ref="doctorReportModal" @submit="showDoctorReportModal = false"/>
+    </el-dialog>
+    <el-dialog
+        title="Doenças Pré-existentes"
+        :visible.sync="showSicknessModal"
+        width="90%">
+      <history-existent-sickness ref="sicknessModal"/>
     </el-dialog>
 
+    <el-dialog
+        title="Sinais Vitais do Paciente"
+        :visible.sync="showVitalSignsModal"
+        width="90%">
+      <vital-signs ref="vitalSignsModal" @submit="showVitalSignsModal = false"/>
+    </el-dialog>
   </main>
 </template>
 
@@ -71,13 +107,25 @@ import PageTitle from "@/components/shared/PageTitle.vue";
 import {PatientModel} from "@/models/PatientModel";
 import {httpGet} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
-import NurseReport from "@/views/Report/NurseReport.vue";
+import NurseReport from "@/components/patient/report/NurseReport.vue";
+import HistoryNurseReport from "@/components/patient/report/HistoryNurseReport.vue";
 import {VForm} from "@/helpers/VFormType";
+import ShowPatient from "@/components/patient/ShowPatient.vue";
+import HistoryExistentSickness from "@/components/patient/HistoryExistentSickness.vue";
+import VitalSigns from "@/components/patient/VitalSigns.vue";
+import DoctorReport from "@/components/patient/report/DoctorReport.vue";
+import HistoryDoctorReport from "@/components/patient/report/HistoryDoctorReport.vue";
 
 @Component({
   components: {
     PageTitle,
-    NurseReport
+    NurseReport,
+    HistoryNurseReport,
+    ShowPatient,
+    HistoryExistentSickness,
+    VitalSigns,
+    DoctorReport,
+    HistoryDoctorReport
   }
 })
 export default class ListPatient extends Vue {
@@ -90,6 +138,10 @@ export default class ListPatient extends Vue {
   showPatientModal = false
   showNurseReportModal = false
   showDoctorReportModal = false
+  showNurseReportHistoryModal = false
+  showDoctorReportHistoryModal = false
+  showSicknessModal = false
+  showVitalSignsModal = false
 
   async created() {
     try {
@@ -108,6 +160,10 @@ export default class ListPatient extends Vue {
   showPatient(patient: PatientModel) {
     this.showPatientModal = true
     this.patient = patient
+
+    this.$nextTick(() => {
+      return this.$refs['showPatientModal'].setInformation(patient)
+    })
   }
 
   async openNurseReport(patient: PatientModel) {
@@ -118,6 +174,61 @@ export default class ListPatient extends Vue {
     })
 
   }
+
+  async openDoctorReport(patient: PatientModel) {
+    this.showDoctorReportModal = true
+    this.$nextTick(() => {
+      return this.$refs['doctorReportModal'].setInformation(patient)
+    })
+  }
+
+  async openNurseReportHistory(patient: PatientModel) {
+    this.showNurseReportHistoryModal = true
+
+    this.$nextTick(() => {
+      return this.$refs['nurseReportHistoryModal'].setInformation(patient)
+    })
+
+  }
+
+  async openDoctorReportHistory(patient: PatientModel) {
+    this.showDoctorReportHistoryModal = true
+
+    this.$nextTick(() => {
+      return this.$refs['doctorReportHistoryModal'].setInformation(patient)
+    })
+
+  }
+
+  async openSicknessModal(patient: PatientModel) {
+    this.showSicknessModal = true
+
+    this.$nextTick(() => {
+      return this.$refs['sicknessModal'].setInformation(patient)
+    })
+
+  }
+
+  async openVitalSignsModal(patient: PatientModel) {
+    this.showVitalSignsModal = true
+    this.$nextTick(() => {
+      return this.$refs['vitalSignsModal'].setInformation(patient)
+    })
+  }
+
+  confirmDeletePatient(patientId: string | number) {
+    this.$confirm('Tem certeza que deseja deletar o Paciente com TODOS os dados e histórico?', 'Atenção', {
+      confirmButtonText: 'Deletar',
+      cancelButtonText: 'Cancelar',
+      type: 'warning'
+    }).then(() => {
+      this.deletePatient(patientId)
+    });
+  }
+
+  async deletePatient(patientId: string | number) {
+    alert('deletar' + patientId)
+  }
 }
 </script>
 
@@ -127,15 +238,7 @@ export default class ListPatient extends Vue {
   justify-content: center;
 }
 
-.row-patient {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  flex-wrap: wrap;
-
+.patient-title {
+  margin-top: 3rem;
 }
-
-/*h2 {*/
-/*  margin-top: 3rem;*/
-/*}*/
 </style>
