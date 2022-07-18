@@ -1,43 +1,30 @@
 <template>
   <main>
-    <page-title title="Doenças Pré-existentes"/>
-    <el-row :gutter="20" class="row-main">
-      <el-col :span="20">
-        <el-card shadow="hover">
-          <div slot="header">
-            <h5>
-              Informações básicas
-            </h5>
-          </div>
+    <el-form @submit.native.prevent="submitForm" ref="sickness-form" :model="model" label-width="120px"
+             :rules="rules" label-position="top">
+      <el-form-item label="Doença" prop="sickness">
+        <el-checkbox-group v-model="model.sickness">
+          <el-checkbox label="DM"></el-checkbox>
+          <el-checkbox label="HAS"></el-checkbox>
+          <el-checkbox label="TABAGISTA"></el-checkbox>
+          <el-checkbox label="ETILISTA"></el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
 
-          <el-form @submit.native.prevent="save" ref="sickness-form" :model="model" label-width="120px"
-                   :rules="rules" label-position="top">
-            <el-form-item label="Doença" prop="sickness">
-              <el-checkbox-group v-model="model.sickness">
-                <el-checkbox label="DM"></el-checkbox>
-                <el-checkbox label="HAS"></el-checkbox>
-                <el-checkbox label="TABAGISTA"></el-checkbox>
-                <el-checkbox label="ETILISTA"></el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
+      <el-form-item label="Outros" prop="sickness">
+        <el-input
+            type="textarea"
+            :rows="2"
+            v-model="model.others">
+        </el-input>
 
-            <el-form-item label="Outros" prop="sickness">
-              <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="model.others">
-              </el-input>
+      </el-form-item>
 
-            </el-form-item>
+      <div class="is-flex is-justify-end">
+        <el-button :loading="loading" type="success" native-type="submit">Salvar</el-button>
+      </div>
 
-            <div class="center">
-              <el-button :loading="loading" type="success" native-type="submit">Salvar</el-button>
-            </div>
-
-          </el-form>
-        </el-card>
-      </el-col>
-    </el-row>
+    </el-form>
   </main>
 </template>
 
@@ -65,9 +52,10 @@ export default class ExistentSickness extends Vue {
   model: PreExistentSicknessModel = new PreExistentSicknessModel()
   loading = false
   rules = existentSicknessRules
+  public patientId: number
 
   submitForm() {
-    if (!this.model.others || !this.model.sickness.length) {
+    if (!this.model.others && !this.model.sickness.length) {
       return this.$notify.warning({
         title: 'Atenção.',
         message: 'Preencha ao menos uma informação.'
@@ -78,14 +66,15 @@ export default class ExistentSickness extends Vue {
   }
 
   async save(): Promise<void> {
-    console.log(this.model)
+    console.log(this.patientId)
     try {
-      const {data} = await httpPost(apiRoutes.sickness, this.model);
+      const {data} = await httpPost(apiRoutes.sickness, {...this.model, patient_id: this.patientId});
       console.log(data)
-      this.$notify.error({
-        title: 'Erro',
+      this.$notify.success({
+        title: 'Sucesso',
         message: 'Informações salvas com sucesso!'
       })
+      this.$emit('submit')
     } catch (e: any) {
       this.$notify.error({
         title: 'Erro',

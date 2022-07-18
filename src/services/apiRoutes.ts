@@ -3,5 +3,6 @@ export const apiRoutes = {
   changePassword: '/auth/change-password',
   users: '/users',
   patients: '/patients',
-  sickness: '/sickness'
+  sickness: '/sickness',
+  nurseReport: '/reports/nurse'
 };

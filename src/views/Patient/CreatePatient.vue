@@ -10,7 +10,8 @@
             </h5>
           </div>
 
-          <el-form @submit.native.prevent="submitForm" ref="patient-form" :model="patient"  label-width="120px" :rules="rules" label-position="top">
+          <el-form @submit.native.prevent="submitForm" ref="patient-form" :model="patient" label-width="120px"
+                   :rules="rules" label-position="top">
             <el-form-item label="Nome" prop="name">
               <el-input v-model="patient.name"></el-input>
             </el-form-item>
@@ -71,7 +72,7 @@
               <el-input v-model="patient.number"></el-input>
             </el-form-item>
 
-            <el-form-item label="Complemento" >
+            <el-form-item label="Complemento">
               <el-input v-model="patient.complement"></el-input>
             </el-form-item>
 
@@ -93,23 +94,29 @@
                 </el-option>
               </el-select>
             </el-form-item>
-
-
-
             <div class="footer">
-              <el-button  type="success" native-type="submit">Salvar</el-button>
+              <el-button type="success" :loading="loading" native-type="submit">Salvar</el-button>
             </div>
 
           </el-form>
         </el-card>
       </el-col>
     </el-row>
+    <el-dialog
+        title="Doenças Pré-existentes"
+        :visible.sync="existentSicknessModal"
+        width="90%"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false">
+      <existent-sickness ref="existentModal" @submit="endRegister" />
+    </el-dialog>
   </main>
 </template>
 
 <script lang="ts">
 import {Vue} from "vue-property-decorator";
-import Component from "vue-class-component";
+import Component, {mixins} from "vue-class-component";
 import PageTitle from "@/components/shared/PageTitle.vue";
 import {PatientModel} from "@/models/PatientModel";
 import {httpPost} from "@/services/http";
@@ -117,20 +124,24 @@ import {apiRoutes} from "@/services/apiRoutes";
 import {VForm} from "@/helpers/VFormType";
 import {createPatientRules} from "@/helpers/validation/create-patient";
 import {states} from "@/helpers/form/states";
+import ExistentSickness from "@/views/Patient/ExistentSickness.vue";
 
 @Component({
   components: {
     PageTitle,
+    ExistentSickness
   }
 })
+
 export default class CreatePatient extends Vue {
   $refs!: {
-    form: VForm
+    form: VForm,
   }
   rules = createPatientRules
   patient: PatientModel = new PatientModel();
   loading = false
   states = states
+  existentSicknessModal = false
 
   async submitForm() {
     await this.$refs['patient-form'].validate((valid: boolean) => {
@@ -145,20 +156,31 @@ export default class CreatePatient extends Vue {
     try {
       const validator: boolean = await this.$validator.validateAll();
       if (!validator) return;
-      const {data} = await httpPost(apiRoutes.patients, this.patient);
+      const {data: {content}} = await httpPost(apiRoutes.patients, this.patient);
       this.$notify.success({
         title: 'Sucesso!',
         message: 'Paciente cadastrado com sucesso.'
       });
-      console.log(data)
-    }catch (err: any) {
+      console.log(content)
+      this.existentSicknessModal = true
+      this.$nextTick(() => {
+        return this.$refs['existentModal'].patientId = content.id;
+      })
+
+    } catch (err: any) {
+      console.log(err)
       this.$notify.error({
-        title: 'Sucesso!',
+        title: 'Erro!',
         message: 'Não foi possivel cadastrar o paciente'
       });
     } finally {
       this.loading = false;
     }
+  }
+
+  endRegister() {
+    this.existentSicknessModal = false
+    this.$router.push({name: 'ListPatient'})
   }
 }
 </script>
@@ -172,6 +194,7 @@ export default class CreatePatient extends Vue {
 
 .el-card
   margin-top: .5rem
+
 label
   padding-bottom: 0 !important
   width: auto

@@ -15,6 +15,7 @@
     "baseUrl": ".",
     "noImplicitAny": false,
     "allowJs": true,
+    "strictPropertyInitialization": false,
     "types": [
       "webpack-env"
     ],
