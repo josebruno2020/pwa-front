@@ -2,7 +2,7 @@
   <main>
     <div id="print">
       <h2 class="report-title">Paciente: {{ patient.name }}</h2>
-      <p v-if="loading">Carregando...</p>
+      <el-skeleton v-if="loading" :rows="6" animated />
       <div class="report" v-for="(report, index) in reports" :key="index">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
@@ -16,6 +16,7 @@
           </div>
         </el-card>
       </div>
+      <p v-if="!reports.length && !loading">Nenhum registro encontrado</p>
     </div>
 
     <div class="report-print">

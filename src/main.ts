@@ -4,6 +4,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import '../public/css/global.css';
+import '@/assets/sass/global.sass';
 import 'material-icons/iconfont/material-icons.css';
 import * as element from 'element-ui';
 import'element-ui/lib/theme-chalk/index.css';

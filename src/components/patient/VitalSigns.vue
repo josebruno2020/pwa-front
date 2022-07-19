@@ -1,6 +1,6 @@
 <template>
   <main>
-    <el-form @submit.native.prevent="submitForm" ref="vital-form" :model="model" label-width="120px"
+    <el-form class="vital-form" @submit.native.prevent="submitForm" ref="vital-form" :model="model" label-width="120px"
              label-position="top" :rules="rules">
       <el-form-item label="Pressão arterial" prop="blood_pressure_first">
         <div class="input-flex">
@@ -94,12 +94,11 @@ export default class VitalSigns extends Vue {
         "patient_id": this.patient.id,
         "blood_pressure": blood_pressure
       })
-      console.log(data)
-      this.$notify.error({
+      this.$notify.success({
         title: 'Sucesso!',
         message: 'Sinais vitais salvos com sucesso.'
       })
-
+      this.model = new VitalSignsModel()
       this.$emit('submit')
     } catch (err: any) {
       this.$notify.error({
@@ -109,7 +108,10 @@ export default class VitalSigns extends Vue {
     } finally {
       this.loading = false
     }
-    console.log('salvar')
+  }
+
+  resetForm() {
+    this.model = new VitalSignsModel()
   }
 }
 </script>

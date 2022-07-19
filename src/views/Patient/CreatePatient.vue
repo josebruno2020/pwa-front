@@ -29,11 +29,11 @@
             </el-form-item>
 
             <el-form-item label="CPF" prop="cpf">
-              <el-input v-model="patient.cpf"></el-input>
+              <el-input v-mask="'###.###.###-##'" masked="false" v-model="patient.cpf"></el-input>
             </el-form-item>
 
             <el-form-item label="RG" prop="rg">
-              <el-input v-model="patient.rg"></el-input>
+              <el-input v-mask="'##.###.###-#'" v-model="patient.rg"></el-input>
             </el-form-item>
 
             <el-form-item label="Cidade de origem" prop="from_city">
@@ -52,11 +52,11 @@
             </el-form-item>
 
             <el-form-item label="Telefone" prop="phone_number">
-              <el-input v-model="patient.phone_number"></el-input>
+              <el-input v-mask="'(##) #####-####'" v-model="patient.phone_number"></el-input>
             </el-form-item>
 
             <el-form-item label="Celular" prop="mobile_number">
-              <el-input v-model="patient.mobile_number"></el-input>
+              <el-input v-mask="'(##) #####-####'" v-model="patient.mobile_number"></el-input>
             </el-form-item>
 
             <div>
@@ -125,6 +125,7 @@ import {VForm} from "@/helpers/VFormType";
 import {createPatientRules} from "@/helpers/validation/create-patient";
 import {states} from "@/helpers/form/states";
 import ExistentSickness from "@/components/patient/ExistentSickness.vue";
+import StringHelper from "@/helpers/string/string-helper";
 
 @Component({
   components: {
@@ -144,6 +145,7 @@ export default class CreatePatient extends Vue {
   existentSicknessModal = false
 
   async submitForm() {
+    console.log(this.patient)
     await this.$refs['patient-form'].validate((valid: boolean) => {
       if (valid) {
         this.loading = true;
@@ -152,8 +154,17 @@ export default class CreatePatient extends Vue {
     });
   }
 
+  removeMaskFromModel() {
+    this.patient.phone_number = StringHelper.onlyNumbers(this.patient.phone_number)
+    this.patient.mobile_number = StringHelper.onlyNumbers(this.patient.mobile_number)
+    this.patient.cpf = StringHelper.onlyNumbers(this.patient.cpf)
+    this.patient.rg = StringHelper.onlyNumbers(this.patient.rg)
+  }
+
+
   async savePatient() {
     try {
+      this.removeMaskFromModel();
       const {data: {content}} = await httpPost(apiRoutes.patients, this.patient);
       this.$notify.success({
         title: 'Sucesso!',
@@ -178,7 +189,7 @@ export default class CreatePatient extends Vue {
 
   endRegister() {
     this.existentSicknessModal = false
-    this.$router.push({name: 'ListPatient'})
+    this.$router.push({name: 'listPatient'})
   }
 }
 </script>

@@ -69,12 +69,12 @@ export default class ExistentSickness extends Vue {
   async save(): Promise<void> {
     console.log(this.patientId)
     try {
-      const {data} = await httpPost(apiRoutes.sickness, {...this.model, patient_id: this.patientId});
-      console.log(data)
+      await httpPost(apiRoutes.sickness, {...this.model, patient_id: this.patientId});
       this.$notify.success({
         title: 'Sucesso',
         message: 'Informações salvas com sucesso!'
       })
+      this.model = new PreExistentSicknessModel()
       this.$emit('submit')
     } catch (e: any) {
       this.$notify.error({

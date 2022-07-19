@@ -63,6 +63,7 @@ export default class DoctorReport extends Vue {
         title: 'Sucesso!',
         message: 'Relatório salvo com sucesso!'
       })
+      this.model = new NurseReportModel()
       this.$emit('submit')
     } catch (err: any) {
       console.log(err)

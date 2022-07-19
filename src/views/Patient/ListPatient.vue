@@ -1,6 +1,6 @@
 <template>
   <main>
-    <page-title title="Pacientes Cadastrados"></page-title>
+    <page-title title="Listagem Pacientes"></page-title>
     <el-row :gutter="20" class="row-main">
       <el-col :span="22">
         <div class="row-action">
@@ -22,15 +22,12 @@
                 prop="name_mother"
                 label="Nome da Mãe">
             </el-table-column>
-            <el-table-column label="Ações">
+            <el-table-column label="Informações e Ações">
               <template slot-scope="scope">
                 <el-button @click="showPatient(scope.row)" type="warning" circle>
                   <el-tooltip class="item" effect="dark" content="Ver informações e ações do cliente" placement="top-start">
-                    <i class="el-icon-circle-plus"></i>
+                    <i class="el-icon-view"></i>
                   </el-tooltip>
-                </el-button>
-                <el-button type="danger" @click="confirmDeletePatient(scope.row.id)" circle>
-                  <i class="el-icon-delete"></i>
                 </el-button>
 
               </template>
@@ -47,16 +44,39 @@
       <show-patient ref="showPatientModal"/>
 
       <h1 class="patient-title">Históricos</h1>
-      <el-button type="light" @click="openSicknessModal(patient)" plain>Doenças pré-existentes</el-button>
-      <el-button type="light" @click="openNurseReportHistory(patient)" plain>Histórico de Enfermagem</el-button>
-      <el-button type="light" @click="openDoctorReportHistory(patient)" plain>Histórico Médico</el-button>
+      <ul class="li-link">
+        <li>
+          <span class="link blue" @click="openSicknessModal(patient)">Doenças pré-existentes <i class="el-icon-view"></i></span>
+        </li>
+        <li>
+          <span class="link blue" @click="openNurseReportHistory(patient)">Histórico de Enfermagem <i class="el-icon-view"></i></span>
+        </li>
+        <li>
+          <span class="link blue" @click="openDoctorReportHistory(patient)">Histórico Médico <i class="el-icon-view"></i></span>
+        </li>
+        <li>
+          <span class="link blue" @click="openVitalSignsHistoryModal(patient)">Histórico Sinais Vitais <i class="el-icon-view"></i></span>
+        </li>
+      </ul>
 
 
       <h1 class="patient-title">Ações</h1>
 
-      <el-button type="success" @click="openNurseReport(patient)" plain>Relatório de Enfermagem</el-button>
-      <el-button type="success" @click="openDoctorReport(patient)" plain>Relatório Médico</el-button>
-      <el-button type="success" @click="openVitalSignsModal(patient)" plain>Sinais Vitais</el-button>
+      <ul class="li-link">
+        <li>
+          <span class="link blue" @click="openNurseReport(patient)">Adicionar Relatório de Enfermagem <i class="el-icon-edit"></i></span>
+        </li>
+        <li>
+          <span class="link blue" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i class="el-icon-edit"></i></span>
+        </li>
+        <li>
+          <span class="link blue" @click="openVitalSignsModal(patient)">Adicionar Sinais Vitais <i class="el-icon-edit"></i></span>
+        </li>
+
+        <li>
+          <span class="link red" @click="confirmDeletePatient(patient.id)">Deletar paciente <i class="el-icon-delete"></i></span>
+        </li>
+      </ul>
     </el-dialog>
 
     <el-dialog
@@ -70,6 +90,13 @@
         :visible.sync="showDoctorReportHistoryModal"
         width="90%">
       <history-doctor-report ref="doctorReportHistoryModal"/>
+    </el-dialog>
+
+    <el-dialog
+        title="Histórico de Sinais Vitais"
+        :visible.sync="showVitalSignsHistoryModal"
+        width="90%">
+      <history-vital-signs ref="vitalSignsHistoryModal"/>
     </el-dialog>
     <el-dialog
         title="Relatório de Enfermagem"
@@ -93,7 +120,8 @@
     <el-dialog
         title="Sinais Vitais do Paciente"
         :visible.sync="showVitalSignsModal"
-        width="90%">
+        width="90%"
+        @close="$refs['vitalSignsModal'].resetForm()">
       <vital-signs ref="vitalSignsModal" @submit="showVitalSignsModal = false"/>
     </el-dialog>
   </main>
@@ -115,6 +143,7 @@ import HistoryExistentSickness from "@/components/patient/HistoryExistentSicknes
 import VitalSigns from "@/components/patient/VitalSigns.vue";
 import DoctorReport from "@/components/patient/report/DoctorReport.vue";
 import HistoryDoctorReport from "@/components/patient/report/HistoryDoctorReport.vue";
+import HistoryVitalSigns from "@/components/patient/HistoryVitalSigns.vue";
 
 @Component({
   components: {
@@ -125,7 +154,8 @@ import HistoryDoctorReport from "@/components/patient/report/HistoryDoctorReport
     HistoryExistentSickness,
     VitalSigns,
     DoctorReport,
-    HistoryDoctorReport
+    HistoryDoctorReport,
+    HistoryVitalSigns
   }
 })
 export default class ListPatient extends Vue {
@@ -142,6 +172,7 @@ export default class ListPatient extends Vue {
   showDoctorReportHistoryModal = false
   showSicknessModal = false
   showVitalSignsModal = false
+  showVitalSignsHistoryModal = false
 
   async created() {
     try {
@@ -216,11 +247,19 @@ export default class ListPatient extends Vue {
     })
   }
 
+  async openVitalSignsHistoryModal(patient: PatientModel) {
+    this.showVitalSignsHistoryModal = true
+    this.$nextTick(() => {
+      return this.$refs['vitalSignsHistoryModal'].setInformation(patient)
+    })
+  }
+
+
   confirmDeletePatient(patientId: string | number) {
     this.$confirm('Tem certeza que deseja deletar o Paciente com TODOS os dados e histórico?', 'Atenção', {
       confirmButtonText: 'Deletar',
       cancelButtonText: 'Cancelar',
-      type: 'warning'
+      type: 'error'
     }).then(() => {
       this.deletePatient(patientId)
     });
@@ -233,6 +272,10 @@ export default class ListPatient extends Vue {
 </script>
 
 <style scoped>
+
+h1 {
+  margin-top: 0;
+}
 .row-main {
   display: flex;
   justify-content: center;
@@ -240,5 +283,29 @@ export default class ListPatient extends Vue {
 
 .patient-title {
   margin-top: 3rem;
+}
+
+.li-link li{
+  margin-bottom: 1rem;
+}
+
+.link {
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1rem;
+
+  transition: all .2s;
+}
+
+.link:hover {
+  opacity: .6;
+}
+
+.red {
+  color: #fd2727;
+}
+
+.blue {
+  color: #3737fa;
 }
 </style>
