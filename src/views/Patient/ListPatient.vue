@@ -11,7 +11,7 @@
         <el-card shadow="hover">
           <el-table
               v-loading="loading"
-              :data="patients"
+              :data="patients.filter((p) => p.name.toLowerCase().includes(patientSearch.toLowerCase()))"
               style="width: 100%"
               empty-text="Nenhum paciente">
             <el-table-column
@@ -22,10 +22,17 @@
                 prop="name_mother"
                 label="Nome da Mãe">
             </el-table-column>
-            <el-table-column label="Informações e Ações">
+            <el-table-column
+                align="right">
+              <template slot="header">
+                <el-input
+                    v-model="patientSearch"
+                    placeholder="Buscar..."></el-input>
+              </template>
               <template slot-scope="scope">
                 <el-button @click="showPatient(scope.row)" type="warning" circle>
-                  <el-tooltip class="item" effect="dark" content="Ver informações e ações do cliente" placement="top-start">
+                  <el-tooltip class="item" effect="dark" content="Ver informações e ações do cliente"
+                              placement="top-start">
                     <i class="el-icon-view"></i>
                   </el-tooltip>
                 </el-button>
@@ -46,16 +53,20 @@
       <h1 class="patient-title">Históricos</h1>
       <ul class="li-link">
         <li>
-          <span class="link blue" @click="openSicknessModal(patient)">Doenças pré-existentes <i class="el-icon-view"></i></span>
+          <span class="link blue" @click="openSicknessModal(patient)">Doenças pré-existentes <i
+              class="el-icon-view"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openNurseReportHistory(patient)">Histórico de Enfermagem <i class="el-icon-view"></i></span>
+          <span class="link blue" @click="openNurseReportHistory(patient)">Histórico de Enfermagem <i
+              class="el-icon-view"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openDoctorReportHistory(patient)">Histórico Médico <i class="el-icon-view"></i></span>
+          <span class="link blue" @click="openDoctorReportHistory(patient)">Histórico Médico <i
+              class="el-icon-view"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openVitalSignsHistoryModal(patient)">Histórico Sinais Vitais <i class="el-icon-view"></i></span>
+          <span class="link blue" @click="openVitalSignsHistoryModal(patient)">Histórico Sinais Vitais <i
+              class="el-icon-view"></i></span>
         </li>
       </ul>
 
@@ -64,18 +75,38 @@
 
       <ul class="li-link">
         <li>
-          <span class="link blue" @click="openNurseReport(patient)">Adicionar Relatório de Enfermagem <i class="el-icon-edit"></i></span>
+          <span class="link blue" @click="openNurseReport(patient)">Adicionar Relatório de Enfermagem <i
+              class="el-icon-edit"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i class="el-icon-edit"></i></span>
+          <span class="link blue" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i
+              class="el-icon-edit"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openVitalSignsModal(patient)">Adicionar Sinais Vitais <i class="el-icon-edit"></i></span>
+          <span class="link blue" @click="openVitalSignsModal(patient)">Adicionar Sinais Vitais <i
+              class="el-icon-edit"></i></span>
         </li>
 
         <li>
-          <span class="link red" @click="confirmDeletePatient(patient.id)">Deletar paciente <i class="el-icon-delete"></i></span>
+          <span class="link blue" @click="openChangeStatusModal(patient)">Mudar Status do Paciente <i class="el-icon-edit"></i></span>
         </li>
+
+
+        <li>
+          <span class="link blue">Editar Paciente (a fazer) <i class="el-icon-edit"></i></span>
+        </li>
+
+        <li>
+          <span class="link red" @click="confirmDeletePatient(patient.id)">Deletar paciente <i
+              class="el-icon-delete"></i></span>
+        </li>
+      </ul>
+
+
+      <h1 class="patient-title">Notificações</h1>
+
+      <ul>
+        <li>A fazer....</li>
       </ul>
     </el-dialog>
 
@@ -124,6 +155,13 @@
         @close="$refs['vitalSignsModal'].resetForm()">
       <vital-signs ref="vitalSignsModal" @submit="showVitalSignsModal = false"/>
     </el-dialog>
+
+    <el-dialog
+        title="Mudar Status do Paciente"
+        :visible.sync="showChangeStatusModal"
+        width="90%">
+      <change-status ref="changeStatusModal" @submit="endChangeStatus()"/>
+    </el-dialog>
   </main>
 </template>
 
@@ -133,7 +171,7 @@ import {Vue} from "vue-property-decorator";
 import Component from "vue-class-component";
 import PageTitle from "@/components/shared/PageTitle.vue";
 import {PatientModel} from "@/models/PatientModel";
-import {httpGet} from "@/services/http";
+import {httpDelete, httpGet} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import NurseReport from "@/components/patient/report/NurseReport.vue";
 import HistoryNurseReport from "@/components/patient/report/HistoryNurseReport.vue";
@@ -144,6 +182,8 @@ import VitalSigns from "@/components/patient/VitalSigns.vue";
 import DoctorReport from "@/components/patient/report/DoctorReport.vue";
 import HistoryDoctorReport from "@/components/patient/report/HistoryDoctorReport.vue";
 import HistoryVitalSigns from "@/components/patient/HistoryVitalSigns.vue";
+import {ElLoadingComponent} from "element-ui/types/loading";
+import ChangeStatus from "@/components/patient/ChangeStatus.vue";
 
 @Component({
   components: {
@@ -155,7 +195,8 @@ import HistoryVitalSigns from "@/components/patient/HistoryVitalSigns.vue";
     VitalSigns,
     DoctorReport,
     HistoryDoctorReport,
-    HistoryVitalSigns
+    HistoryVitalSigns,
+    ChangeStatus
   }
 })
 export default class ListPatient extends Vue {
@@ -163,6 +204,7 @@ export default class ListPatient extends Vue {
     form: VForm
   }
   patients: PatientModel[] = []
+  patientSearch = ''
   loading = true
   patient: PatientModel = new PatientModel()
   showPatientModal = false
@@ -173,8 +215,15 @@ export default class ListPatient extends Vue {
   showSicknessModal = false
   showVitalSignsModal = false
   showVitalSignsHistoryModal = false
+  showChangeStatusModal = false
 
-  async created() {
+  loadingFull: ElLoadingComponent
+
+  created() {
+    this.fetchPatients();
+  }
+
+  private async fetchPatients() {
     try {
       const {data: {content}} = await httpGet(apiRoutes.patients);
       this.patients = content;
@@ -247,6 +296,19 @@ export default class ListPatient extends Vue {
     })
   }
 
+  async openChangeStatusModal(patient: PatientModel) {
+    this.showChangeStatusModal = true
+    this.$nextTick(() => {
+      return this.$refs['changeStatusModal'].setInformation(patient)
+    })
+  }
+
+  endChangeStatus() {
+    this.showChangeStatusModal = false
+    this.showPatientModal = false
+    return this.fetchPatients();
+  }
+
   async openVitalSignsHistoryModal(patient: PatientModel) {
     this.showVitalSignsHistoryModal = true
     this.$nextTick(() => {
@@ -259,14 +321,42 @@ export default class ListPatient extends Vue {
     this.$confirm('Tem certeza que deseja deletar o Paciente com TODOS os dados e histórico?', 'Atenção', {
       confirmButtonText: 'Deletar',
       cancelButtonText: 'Cancelar',
-      type: 'error'
+      dangerouslyUseHTMLString: true,
+      type: 'warning'
     }).then(() => {
+      this.openFullScreenLoading()
       this.deletePatient(patientId)
     });
   }
 
   async deletePatient(patientId: string | number) {
-    alert('deletar' + patientId)
+    try {
+      await httpDelete(`${apiRoutes.patients}/${patientId}`);
+      this.$notify.success({
+        title: "Sucesso!",
+        message: 'Paciente excluido com sucesso!'
+      })
+      await this.fetchPatients()
+      this.showPatientModal = false;
+    } catch (err: any) {
+      console.log(err)
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível deletar o paciente.'
+      })
+    } finally {
+      this.loadingFull.close();
+    }
+  }
+
+
+  openFullScreenLoading() {
+    this.loadingFull = this.$loading({
+      lock: true,
+      text: 'Carregando',
+      spinner: 'el-icon-loading',
+      background: 'rgba(255,255,255,0.7)'
+    });
   }
 }
 </script>
@@ -276,6 +366,7 @@ export default class ListPatient extends Vue {
 h1 {
   margin-top: 0;
 }
+
 .row-main {
   display: flex;
   justify-content: center;
@@ -285,7 +376,7 @@ h1 {
   margin-top: 3rem;
 }
 
-.li-link li{
+.li-link li {
   margin-bottom: 1rem;
 }
 

@@ -44,6 +44,7 @@ export default class HistoryNurseReport extends Vue {
   reports: Array<any> = []
 
   async setInformation(patient: PatientModel) {
+    this.reports = []
     this.patient = patient
     this.loading = true
     try {

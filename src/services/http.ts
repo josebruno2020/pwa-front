@@ -43,3 +43,14 @@ export const httpGet = async (url: string, params?): Promise<AxiosResponse> => {
 export const httpPost = async (url: string, model: any): Promise<AxiosResponse> => {
     return http.post(url, model);
 }
+
+export const httpPut = async (url: string, model: any): Promise<AxiosResponse> => {
+    return http.put(url, model);
+}
+
+
+export const httpDelete = async (url: string, model?: any): Promise<AxiosResponse> => {
+    return http.delete(url, {
+        data: model
+    })
+}

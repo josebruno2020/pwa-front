@@ -40,6 +40,7 @@ export default class HistoryVitalSigns extends Vue {
   vitalSigns = []
 
   async setInformation(patient: PatientModel) {
+    this.vitalSigns = []
     this.patient = patient
     this.loading = true
 

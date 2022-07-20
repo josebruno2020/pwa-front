@@ -16,6 +16,7 @@ export class PatientModel {
     neighborhood = '';
     city = '';
     state = ''
+    status = 0
     constructor(
         name = '',
         birthdate = '',
@@ -32,7 +33,8 @@ export class PatientModel {
         complement = '',
         neighborhood = '',
         city = '',
-        state = ''
+        state = '',
+        status = 0
     ) {
         this.name = name;
         this.birthdate = birthdate;
@@ -50,5 +52,6 @@ export class PatientModel {
         this.neighborhood = neighborhood;
         this.city = city;
         this.state = state;
+        this.status = status;
     }
 }

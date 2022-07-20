@@ -1,7 +1,74 @@
 <template>
   <main>
     <page-title title="Cadastro de paciente"/>
+
     <el-row :gutter="20" class="row-main">
+      <el-col :span="20">
+        <el-steps :active="active" finish-status="success">
+          <el-step title="Escolher paciente"></el-step>
+          <el-step title="Cadastro paciente"></el-step>
+        </el-steps>
+      </el-col>
+    </el-row>
+    <el-row v-if="active == 0" :gutter="20" class="row-main">
+      <el-col :span="20">
+        <el-card shadow="hover">
+          <div slot="header">
+            <h5>
+              Procurar Paciente
+            </h5>
+          </div>
+          <p>Verifique se o paciente já existe nos registros antes de continuar.</p>
+          <el-form @submit.native.prevent="searchPatient" :inline="true" ref="patient-form" label-width="120px">
+
+            <el-form-item label="Campo de busca">
+              <el-input v-model="search" placeholder="Buscar pelo nome ou nome da mãe..."></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="success" plain :loading="loading" native-type="submit">Procurar</el-button>
+            </el-form-item>
+          </el-form>
+
+          <el-table
+              v-if="patientsSearched.length"
+              v-loading="loading"
+              :data="patientsSearched"
+              style="width: 100%"
+              empty-text="Nenhum paciente">
+            <el-table-column
+                prop="name"
+                label="Nome">
+            </el-table-column>
+            <el-table-column
+                prop="name_mother"
+                label="Nome da Mãe">
+            </el-table-column>
+            <el-table-column
+                prop="cpf"
+                label="CPF">
+            </el-table-column>
+            <el-table-column
+                label="Ação">
+              <template slot-scope="scope">
+                <el-button type="success" plain circle>
+                  <el-tooltip class="item" effect="dark" content="Escolher paciente e continuar"
+                              placement="top-start">
+                    <i class="el-icon-check" @click="choosePatient(scope.row)"></i>
+                  </el-tooltip>
+                </el-button>
+
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <div class="footer">
+            <el-button type="success" @click="confirmContinue()" :loading="loading" native-type="button">Continuar
+            </el-button>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-row v-if="active == 1" :gutter="20" class="row-main">
       <el-col :span="20">
         <el-card shadow="hover">
           <div slot="header">
@@ -10,6 +77,9 @@
             </h5>
           </div>
 
+          <p v-if="patientChoosed">Por ter escolhido um paciente já existente, algumas informações estarão desabilitadas
+            :)</p>
+
           <el-form @submit.native.prevent="submitForm" ref="patient-form" :model="patient" label-width="120px"
                    :rules="rules" label-position="top">
             <el-form-item label="Nome" prop="name">
@@ -17,7 +87,7 @@
             </el-form-item>
 
             <el-form-item label="Data de Nascimento" prop="birthdate">
-              <el-input type="date" v-model="patient.birthdate"></el-input>
+              <el-input type="date" v-model="patient.birthdate" :disabled="patientChoosed"></el-input>
             </el-form-item>
 
             <el-form-item label="Nome da Mãe" prop="name_mother">
@@ -29,7 +99,8 @@
             </el-form-item>
 
             <el-form-item label="CPF" prop="cpf">
-              <el-input v-mask="'###.###.###-##'" masked="false" v-model="patient.cpf"></el-input>
+              <el-input v-mask="'###.###.###-##'" masked="false" v-model="patient.cpf"
+                        :disabled="patientChoosed"></el-input>
             </el-form-item>
 
             <el-form-item label="RG" prop="rg">
@@ -37,11 +108,12 @@
             </el-form-item>
 
             <el-form-item label="Cidade de origem" prop="from_city">
-              <el-input v-model="patient.from_city"></el-input>
+              <el-input v-model="patient.from_city" :disabled="patientChoosed"></el-input>
             </el-form-item>
 
             <el-form-item label="Estado" prop="from_state">
-              <el-select v-model="patient.from_state" clearable placeholder="selecione..." filterable>
+              <el-select v-model="patient.from_state" clearable placeholder="selecione..." filterable
+                         :disabled="patientChoosed">
                 <el-option
                     v-for="state in states"
                     :key="state.value"
@@ -95,6 +167,7 @@
               </el-select>
             </el-form-item>
             <div class="footer">
+              <el-button type="light" @click="active--" :loading="loading" native-type="button">Voltar</el-button>
               <el-button type="success" :loading="loading" native-type="submit">Salvar</el-button>
             </div>
 
@@ -102,6 +175,7 @@
         </el-card>
       </el-col>
     </el-row>
+
     <el-dialog
         title="Doenças Pré-existentes"
         :visible.sync="existentSicknessModal"
@@ -109,7 +183,7 @@
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :show-close="false">
-      <existent-sickness ref="existentModal" @submit="endRegister" />
+      <existent-sickness ref="existentModal" @submit="endRegister"/>
     </el-dialog>
   </main>
 </template>
@@ -119,7 +193,7 @@ import {Vue} from "vue-property-decorator";
 import Component, {mixins} from "vue-class-component";
 import PageTitle from "@/components/shared/PageTitle.vue";
 import {PatientModel} from "@/models/PatientModel";
-import {httpPost} from "@/services/http";
+import {httpGet, httpPost, httpPut} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import {VForm} from "@/helpers/VFormType";
 import {createPatientRules} from "@/helpers/validation/create-patient";
@@ -138,11 +212,42 @@ export default class CreatePatient extends Vue {
   $refs!: {
     form: VForm,
   }
+  active = 0
+  search = ''
+  patientsSearched: PatientModel[] = []
+  patientChoosed = false
+
   rules = createPatientRules
   patient: PatientModel = new PatientModel();
   loading = false
   states = states
   existentSicknessModal = false
+
+  async searchPatient() {
+    this.loading = true
+    try {
+      const {data} = await httpGet(apiRoutes.patients, {search: this.search});
+      console.log(data)
+      this.patientsSearched = data.content
+    } catch (err: any) {
+      this.$notify.error({
+        title: 'Erro!',
+        message: 'Não foi possivel mudar os pacientes.'
+      });
+    } finally {
+      this.loading = false
+    }
+  }
+
+  choosePatient(patient: PatientModel) {
+    this.patient = patient
+    this.next()
+    this.patientChoosed = true
+    this.$notify.success({
+      title: 'Sucesso!',
+      message: 'Paciente escolhido com sucesso!'
+    });
+  }
 
   async submitForm() {
     console.log(this.patient)
@@ -165,15 +270,24 @@ export default class CreatePatient extends Vue {
   async savePatient() {
     try {
       this.removeMaskFromModel();
-      const {data: {content}} = await httpPost(apiRoutes.patients, this.patient);
+      let response: PatientModel;
+      if (!this.patientChoosed) {
+        const {data: {content}} = await httpPost(apiRoutes.patients, this.patient);
+        response = content
+      } else {
+        const {data: {content}} = await httpPut(`${apiRoutes.patients}/${this.patient.id}`, {
+          ...this.patient,
+          is_choosed: true
+        });
+        response = content
+      }
       this.$notify.success({
         title: 'Sucesso!',
         message: 'Paciente cadastrado com sucesso.'
       });
-      console.log(content)
       this.existentSicknessModal = true
       this.$nextTick(() => {
-        return this.$refs['existentModal'].patientId = content.id;
+        return this.$refs['existentModal'].patientId = response.id;
       })
 
     } catch (err: any) {
@@ -190,6 +304,25 @@ export default class CreatePatient extends Vue {
   endRegister() {
     this.existentSicknessModal = false
     this.$router.push({name: 'listPatient'})
+  }
+
+  confirmContinue() {
+    this.$confirm('Deseja continuar o cadastro sem escolher um paciente?', 'Atenção', {
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar',
+      type: 'info'
+    }).then(() => {
+      this.next();
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: 'Operação cancelada.'
+      });
+    });
+  }
+
+  next() {
+    if (this.active++ > 2) this.active = 0;
   }
 }
 </script>

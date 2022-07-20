@@ -32,6 +32,7 @@ export default class HistoryExistentSickness extends Vue {
   patient: PatientModel = new PatientModel()
 
   async setInformation(patient: PatientModel) {
+    this.sickness = new PreExistentSicknessModel()
     this.patient = patient
     this.loading = true
 

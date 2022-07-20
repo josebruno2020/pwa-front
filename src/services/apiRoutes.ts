@@ -6,5 +6,6 @@ export const apiRoutes = {
   sickness: '/sickness',
   nurseReport: '/reports/nurse',
   doctorReport: '/reports/doctor',
-  vitalSign: '/vital-signs'
+  vitalSign: '/vital-signs',
+  changeStatus: '/patients/status-history'
 };
