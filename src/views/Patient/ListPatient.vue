@@ -11,7 +11,7 @@
         <el-card shadow="hover">
           <el-table
               v-loading="loading"
-              :data="patients.filter((p) => p.name.toLowerCase().includes(patientSearch.toLowerCase()))"
+              :data="patients"
               style="width: 100%"
               empty-text="Nenhum paciente">
             <el-table-column
@@ -27,7 +27,9 @@
               <template slot="header">
                 <el-input
                     v-model="patientSearch"
-                    placeholder="Buscar..."></el-input>
+                    @input="test"
+                    placeholder="Buscar..."
+                    size="mini" />
               </template>
               <template slot-scope="scope">
                 <el-button @click="showPatient(scope.row)" type="warning" circle>
@@ -40,6 +42,15 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+              v-if="content"
+              :current-page="page"
+              :page-size="10"
+              :pager-count="5"
+              layout="prev, pager, next"
+              :total="content.total"
+              @current-change="changePage">
+          </el-pagination>
         </el-card>
       </el-col>
     </el-row>
@@ -204,7 +215,11 @@ export default class ListPatient extends Vue {
     form: VForm
   }
   patients: PatientModel[] = []
-  patientSearch = ''
+  content: any = null
+  page = 1
+  // size = 10
+
+  public patientSearch = ''
   loading = true
   patient: PatientModel = new PatientModel()
   showPatientModal = false
@@ -219,14 +234,20 @@ export default class ListPatient extends Vue {
 
   loadingFull: ElLoadingComponent
 
+  test() {
+    console.log(this.patientSearch)
+  }
+
   created() {
     this.fetchPatients();
   }
 
   private async fetchPatients() {
+    this.loading = true
     try {
-      const {data: {content}} = await httpGet(apiRoutes.patients);
-      this.patients = content;
+      const {data: {content}} = await httpGet(apiRoutes.patients, { page: this.page });
+      this.patients = content.data;
+      this.content = content
     } catch (e: any) {
       this.$notify.error({
         title: 'Erro',
@@ -235,6 +256,11 @@ export default class ListPatient extends Vue {
     } finally {
       this.loading = false;
     }
+  }
+
+  changePage(newPage) {
+    this.page = newPage
+    return this.fetchPatients();
   }
 
   showPatient(patient: PatientModel) {
