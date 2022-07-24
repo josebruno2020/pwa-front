@@ -7,5 +7,7 @@ export const apiRoutes = {
   nurseReport: '/reports/nurse',
   doctorReport: '/reports/doctor',
   vitalSign: '/vital-signs',
-  changeStatus: '/patients/status-history'
+  changeStatus: '/patients/status-history',
+  chat: '/chat',
+  chatUsers: '/chat/users',
 };
