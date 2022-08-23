@@ -10,4 +10,5 @@ export const apiRoutes = {
   changeStatus: '/patients/status-history',
   chat: '/chat',
   chatUsers: '/chat/users',
+  chart: '/charts'
 };

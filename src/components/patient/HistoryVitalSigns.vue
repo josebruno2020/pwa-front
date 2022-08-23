@@ -6,9 +6,12 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span>Enfermeiro(a): <strong>{{ vital.user.name }}</strong></span>
-          <span style="float: right; padding: 3px 0" type="text"><strong>{{
-              new Date(vital.created_at).toLocaleString()
-            }}</strong></span>
+          <span style="float: right; padding: 3px 0" type="text"><strong>{{formatDate(vital.created_at)}}</strong></span>
+          <span class="report-action"  v-if="vital.user.id === userId">
+              <el-button size="mini" title="Excluir Relatório" type="danger" plain @click="deleteVitalSign(vital.id)">
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </span>
         </div>
         <div class="report-body">
           <p>Pressão Arterial: <strong>{{ vital.blood_pressure.split(',')[0] }}</strong>x<strong>{{ vital.blood_pressure.split(',')[1] }}</strong> mmHg</p>
@@ -28,27 +31,35 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {PatientModel} from "@/models/PatientModel";
-import {httpGet} from "@/services/http";
+import {httpDelete, httpGet} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
+import {Mixins} from "vue-mixin-decorator";
+import DateMixin from "@/components/mixins/dateMixin";
+import LoadingMixin from "@/components/mixins/loadingMixin";
 
 @Component({
   name: 'HistoryVitalSigns'
 })
-export default class HistoryVitalSigns extends Vue {
+export default class HistoryVitalSigns extends Mixins<LoadingMixin>(DateMixin, LoadingMixin) {
   patient: PatientModel = new PatientModel()
   loading = false
   vitalSigns = []
+  userId: number
 
   async setInformation(patient: PatientModel) {
-    this.vitalSigns = []
     this.patient = patient
+    this.userId = this.$store.state.user.id
+
+    await this.fetchInformation();
+  }
+
+  async fetchInformation() {
     this.loading = true
+    this.vitalSigns = []
 
     try {
-      const { data } = await httpGet(`${apiRoutes.vitalSign}/${patient.id}`)
+      const { data } = await httpGet(`${apiRoutes.vitalSign}/${this.patient.id}`)
       this.vitalSigns = data.content
-
-      console.log(this.vitalSigns)
 
     } catch (err: any) {
       this.$notify.error({
@@ -57,6 +68,25 @@ export default class HistoryVitalSigns extends Vue {
       })
     } finally {
       this.loading = false
+    }
+  }
+
+  async deleteVitalSign(vitalId: number) {
+    this.openFullScreenLoading()
+    try {
+      await httpDelete(`${apiRoutes.vitalSign}/${vitalId}`);
+      this.$notify.success({
+        title: 'Sucesso',
+        message: 'Relatório deletado com sucesso'
+      })
+      return this.fetchInformation();
+    } catch (err) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível deletar o relatório'
+      })
+    } finally {
+      this.loadingFull.close()
     }
   }
 }

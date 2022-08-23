@@ -75,8 +75,8 @@ export default {
 
   computed: {
     chatMessages() {
-      return this.messages.filter(m => {
-        let chatIdArray = m.chatId.split('-')
+      return this.messages.filter(message => {
+        let chatIdArray = message.chatId.split('-')
         return (Number(chatIdArray[0]) === this.loggedUser.id && Number(chatIdArray[1]) === this.userTo.id) ||
             (Number(chatIdArray[0]) === this.userTo.id && Number(chatIdArray[1]) === this.loggedUser.id)
       })
@@ -107,6 +107,7 @@ export default {
           let mensagemLida = true
 
 
+          // verificar se ele está no chat.
           if (userFromId !== this.userTo.id) {
             console.log('nao estou no chat')
             mensagemLida = false
@@ -137,6 +138,7 @@ export default {
     if (this.$store.state.token) {
       return this.logged = true;
     }
+    this.getUsers();
     return this.logged = false;
   },
 
@@ -166,12 +168,7 @@ export default {
     },
 
     async fetchMessages() {
-      //TODO get messages
-      //GET request to the messages route in our Laravel server to fetch all the messages
-      // axios.get('/messages').then(response => {
-      //   //Save the response in the messages array to display on the chat view
-      //   this.messages = response.data;
-      // });
+      //TODO get messages com o chatId quando clicar no chat.
     },
 
     async addMessage(obj) {

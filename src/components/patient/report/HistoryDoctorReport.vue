@@ -1,18 +1,39 @@
 <template>
   <main>
-    <div id="print">
-      <h2 class="report-title">Paciente: {{ patient.name }}</h2>
+    <div id="print-doctor">
+      <h2 class="report-title">Relatório Médico</h2>
+      <p class="report-subtitle">Paciente: {{ patient.name }}</p>
       <el-skeleton v-if="loading" :rows="6" animated />
       <div class="report" v-for="(report, index) in reports" :key="index">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>Doutor(a): <strong>{{ report.user.name }}</strong></span>
-            <span style="float: right; padding: 3px 0" type="text"><strong>{{
-                new Date(report.created_at).toLocaleString()
-              }}</strong></span>
+            <span style="float: right; padding: 3px 0" type="text"><strong>{{ formatDate(report.created_at) }}</strong>
+            </span>
+            <span class="report-action"  v-if="report.user.id === userId">
+              <el-button size="mini" title="Editar Relatório" type="warning" plain @click="editRow(index)">
+                <i class="el-icon-edit"></i>
+              </el-button>
+              <el-button size="mini" title="Excluir Relatório" type="danger" plain @click="deleteReport(report.id)">
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </span>
           </div>
           <div class="report-body">
-            <p>{{ report.report }}</p>
+            <p :id="`report-${index}`">{{ report.report }}</p>
+            <div :id="`edit-report-${index}`" class="d-none">
+              <el-input type="textarea" v-model="report.report"></el-input>
+              <el-button
+                  class="btn-edit"
+                  type="light"
+                  size="mini"
+                  @click="removeEditRow(index)">
+                Cancelar</el-button>
+              <el-button class="btn-edit" type="success" plain size="mini"
+                         @click="updateReport(report.id, report.report)">
+                Salvar
+              </el-button>
+            </div>
           </div>
         </el-card>
       </div>
@@ -21,7 +42,7 @@
     </div>
 
     <div class="report-print">
-      <el-button type="warning" plain @click="printReport()">
+      <el-button type="warning" plain @click="printReport('print-doctor')">
         <i class="el-icon-printer"></i>
       </el-button>
     </div>
@@ -32,24 +53,33 @@
 
 import { PatientModel } from "@/models/PatientModel";
 import { apiRoutes } from "@/services/apiRoutes";
-import { httpGet } from "@/services/http";
-import {Component, Vue} from "vue-property-decorator";
+import {httpDelete, httpGet, httpPut} from "@/services/http";
+import {Mixins, Component} from "vue-mixin-decorator";
+import LoadingMixin from "@/components/mixins/loadingMixin";
+import DateMixin from "@/components/mixins/dateMixin";
+import EditRowMixin from "@/components/mixins/editRowMixin";
+import PrintMixin from "@/components/mixins/printMixin";
 
 @Component({
   name: 'HistoryDoctorReport'
 })
-export default class HistoryDoctorReport extends Vue {
+export default class HistoryDoctorReport extends Mixins<LoadingMixin>(LoadingMixin, DateMixin, EditRowMixin, PrintMixin) {
   loading = false
   patient: PatientModel = new PatientModel()
   reports: Array<any> = []
+  userId: number
 
   async setInformation(patient: PatientModel) {
-    this.reports = []
     this.patient = patient
+    this.userId = this.$store.state.user.id
+    await this.fetchReport();
+  }
+
+  async fetchReport() {
     this.loading = true
+    this.reports = []
     try {
       const {data} = await httpGet(`${apiRoutes.doctorReport}/${this.patient.id}`)
-      console.log(data)
       this.reports = data.content
     } catch (err: any) {
       this.$notify.error({
@@ -61,33 +91,46 @@ export default class HistoryDoctorReport extends Vue {
     }
   }
 
-  printReport() {
-    // Get HTML to print from element
-    const prtHtml = document.getElementById('print')?.innerHTML;
 
-    // Get all stylesheets HTML
-    let stylesHtml = '';
-    for (const node of [...document.querySelectorAll('link[rel="stylesheet"], style')]) {
-      stylesHtml += node.outerHTML;
+
+  async updateReport(reportId: number, newReport: string) {
+    this.openFullScreenLoading()
+    try {
+      await httpPut(`${apiRoutes.doctorReport}/${reportId}`, {
+        report: newReport
+      });
+      this.$notify.success({
+        title: 'Sucesso',
+        message: 'Relatório atualizado com sucesso'
+      })
+      return this.fetchReport();
+    } catch (err) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível deletar o relatório'
+      })
+    } finally {
+      this.loadingFull.close();
     }
+  }
 
-    // Open the print window
-    const WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
-
-    WinPrint?.document.write(`<!DOCTYPE html>
-      <html>
-        <head>
-          ${stylesHtml}
-        </head>
-        <body>
-          ${prtHtml}
-        </body>
-      </html>`);
-
-    WinPrint?.document.close();
-    WinPrint?.focus();
-    WinPrint?.print();
-    WinPrint?.close();
+  async deleteReport(reportId: number) {
+    this.openFullScreenLoading()
+    try {
+      await httpDelete(`${apiRoutes.doctorReport}/${reportId}`);
+      this.$notify.success({
+        title: 'Sucesso',
+        message: 'Relatório deletado com sucesso'
+      })
+      return this.fetchReport();
+    } catch (err) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível deletar o relatório'
+      })
+    } finally {
+      this.loadingFull.close()
+    }
   }
 }
 </script>
@@ -96,14 +139,8 @@ export default class HistoryDoctorReport extends Vue {
 .report-title {
   margin-bottom: 2rem;
 }
+
 .report-body {
   font-size: 1.1rem;
 }
-
-.report-print {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: flex-end;
-}
-
 </style>

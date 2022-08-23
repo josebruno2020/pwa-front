@@ -1,6 +1,6 @@
 <template>
   <main>
-    <page-title title="Listagem Pacientes"></page-title>
+    <page-title title="Listagem Pacientes" />
     <el-row :gutter="20" class="row-main">
       <el-col :span="22">
         <div class="row-action">
@@ -79,6 +79,10 @@
           <span class="link blue" @click="openVitalSignsHistoryModal(patient)">Histórico Sinais Vitais <i
               class="el-icon-view"></i></span>
         </li>
+        <li>
+          <span class="link blue" @click="openPatientChartModal(patient)">Prontuário <i
+              class="el-icon-view"></i></span>
+        </li>
       </ul>
 
 
@@ -140,6 +144,14 @@
         width="90%">
       <history-vital-signs ref="vitalSignsHistoryModal"/>
     </el-dialog>
+
+    <el-dialog
+        title="Prontuário"
+        :visible.sync="showPatientChart"
+        width="90%">
+      <patient-chart ref="patientChartModal"/>
+    </el-dialog>
+
     <el-dialog
         title="Relatório de Enfermagem"
         :visible.sync="showNurseReportModal"
@@ -195,6 +207,7 @@ import HistoryDoctorReport from "@/components/patient/report/HistoryDoctorReport
 import HistoryVitalSigns from "@/components/patient/HistoryVitalSigns.vue";
 import {ElLoadingComponent} from "element-ui/types/loading";
 import ChangeStatus from "@/components/patient/ChangeStatus.vue";
+import PatientChart from "@/components/patient/PatientChart.vue";
 
 @Component({
   components: {
@@ -207,7 +220,8 @@ import ChangeStatus from "@/components/patient/ChangeStatus.vue";
     DoctorReport,
     HistoryDoctorReport,
     HistoryVitalSigns,
-    ChangeStatus
+    ChangeStatus,
+    PatientChart
   }
 })
 export default class ListPatient extends Vue {
@@ -231,6 +245,7 @@ export default class ListPatient extends Vue {
   showVitalSignsModal = false
   showVitalSignsHistoryModal = false
   showChangeStatusModal = false
+  showPatientChart = false
 
   loadingFull: ElLoadingComponent
 
@@ -339,6 +354,13 @@ export default class ListPatient extends Vue {
     this.showVitalSignsHistoryModal = true
     this.$nextTick(() => {
       return this.$refs['vitalSignsHistoryModal'].setInformation(patient)
+    })
+  }
+
+  async openPatientChartModal(patient: PatientModel) {
+    this.showPatientChart = true
+    this.$nextTick(() => {
+      return this.$refs['patientChartModal'].setInformation(patient)
     })
   }
 

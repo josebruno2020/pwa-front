@@ -99,7 +99,7 @@
             </el-form-item>
 
             <el-form-item label="CPF" prop="cpf">
-              <el-input v-mask="'###.###.###-##'" masked="false" v-model="patient.cpf"
+              <el-input v-mask="'###.###.###-##'" v-model="patient.cpf"
                         :disabled="patientChoosed"></el-input>
             </el-form-item>
 
@@ -167,7 +167,7 @@
               </el-select>
             </el-form-item>
             <div class="footer">
-              <el-button type="light" @click="active--" :loading="loading" native-type="button">Voltar</el-button>
+              <el-button type="light" @click="back" :loading="loading" native-type="button">Voltar</el-button>
               <el-button type="success" :loading="loading" native-type="submit">Salvar</el-button>
             </div>
 
@@ -304,6 +304,11 @@ export default class CreatePatient extends Vue {
   endRegister() {
     this.existentSicknessModal = false
     this.$router.push({name: 'listPatient'})
+  }
+
+  back() {
+    this.active--;
+    this.patient = new PatientModel();
   }
 
   confirmContinue() {
