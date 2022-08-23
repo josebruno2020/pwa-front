@@ -50,14 +50,17 @@
 
 <script lang="ts">
 
-import {Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {VForm} from "@/helpers/VFormType";
 import {UserModel} from "@/models/UserModel";
 import {userType, userTypeInterface} from "@/enums/userType";
-import {httpPost} from "@/services/http";
+import {httpPut} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import {createUserRules} from "@/helpers/validation/create-user";
 
+@Component({
+  name: 'EditUser'
+})
 export default class EditUser extends Vue {
   $refs!: {
     form: VForm
@@ -69,6 +72,13 @@ export default class EditUser extends Vue {
 
   rules = createUserRules
 
+  setInformation(user: UserModel) {
+    this.user = user;
+    this.userId = user.id
+
+    console.log(this.user)
+  }
+
   async submitForm() {
     await this.$refs['user-form'].validate((valid: boolean) => {
       if (valid) return this.editUser();
@@ -79,7 +89,7 @@ export default class EditUser extends Vue {
   async editUser() {
     this.loading = true;
     try {
-      const {data} = await httpPost(apiRoutes.users, this.user);
+      const {data} = await httpPut(`${apiRoutes.users}/${this.userId}`, this.user);
       console.log(data);
 
       this.$notify.success({
@@ -91,7 +101,7 @@ export default class EditUser extends Vue {
 
     } catch (err: any) {
       this.$notify.error({
-        title: 'Sucesso!',
+        title: 'Erro!',
         message: 'Não foi possivel atualiar o usuário'
       });
     } finally {

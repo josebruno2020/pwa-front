@@ -1,5 +1,5 @@
 <template>
-  <main class="container">
+  <main>
     <page-title title="Usuários cadastrados"/>
     <el-row :gutter="20" class="row-main">
       <el-col :span="22">
@@ -7,14 +7,13 @@
           <router-link  :to="{name: 'createUser'}" class="router-button">
             <el-button line-origin="left"  plain type="success">Cadastrar novo usuário</el-button>
           </router-link>
-        </div>       
-        
-
+        </div>
         <el-card shadow="hover">
           <el-table
             v-loading="loading"
             :data="users"
-            style="width: 100%">
+            style="width: 100%"
+            empty-text="Nenhum registro">
             <el-table-column
               prop="name"
               label="Nome">
@@ -29,56 +28,132 @@
             </el-table-column>
             <el-table-column label="Ações">
               <template slot-scope="scope">
-              <!-- <router-link> -->
-                <el-button type="warning" circle>
-                  {{ scope.row.id }}
+                <el-button type="warning" circle @click="editUser(scope.row)">
                   <i class="el-icon-edit"></i>
                 </el-button>
-                <el-button type="danger" circle>
+                <el-button type="danger" circle @click="confirmDeleteUser(scope.row.id)">
                   <i class="el-icon-delete"></i>  
                 </el-button>
-              <!-- </router-link> -->
-              
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+              v-if="content"
+              :current-page="page"
+              :page-size="2"
+              :pager-count="5"
+              layout="prev, pager, next"
+              :total="content.total"
+              @current-change="changePage">
+          </el-pagination>
           </el-card>
       </el-col>
     </el-row>
+
+    <el-dialog
+        title="Editar Usuário"
+        :visible.sync="showEditUserModal"
+        width="90%">
+      <edit-user ref="editUserModal" @submit="closeModal" />
+    </el-dialog>
   </main>
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component} from "vue-property-decorator";
 import {UserModel} from "@/models/UserModel";
-import {httpGet} from "@/services/http";
+import {httpDelete, httpGet} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import PageTitle from "@/components/shared/PageTitle.vue";
 import {userType, userTypeInterface} from "@/enums/userType";
+import EditUser from "@/components/user/EditUser.vue";
+import {VForm} from "@/helpers/VFormType";
+import {Mixins} from "vue-mixin-decorator";
+import LoadingMixin from "@/components/mixins/loadingMixin";
 
 @Component({
   components: {
-    PageTitle
+    PageTitle,
+    EditUser
   }
 })
-export default class CreateUser extends Vue {
+export default class ListUser extends Mixins<LoadingMixin>(LoadingMixin) {
+  $refs!: {
+    form: VForm
+  }
   users: UserModel[] = [];
   userTypes: userTypeInterface[] = userType;
   loading = true
+  showEditUserModal = false;
+  page = 1
+  content: any = null
 
   async created() {
+    await this.fetchUsers();
+  }
+
+  async fetchUsers() {
+    this.loading = true
     try {
-      const {data: {content}} = await httpGet(apiRoutes.users);
-      this.users = content;
+      const {data: {content}} = await httpGet(apiRoutes.users, { page: this.page });
+      this.users = content.data;
+      this.content = content
     } catch (err: any) {
-      console.log(err);
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível buscar os usuários'
+      })
     } finally {
       this.loading = false;
     }
   }
 
-  async editUser(id: number) {
-    alert(`editar ${id}`);
+  changePage(newPage) {
+    this.page = newPage
+    return this.fetchUsers();
+  }
+
+  async editUser(user: UserModel) {
+    this.showEditUserModal = true
+
+    this.$nextTick(() => {
+      return this.$refs['editUserModal'].setInformation(user)
+    })
+  }
+
+  closeModal() {
+    this.showEditUserModal = false
+    return this.fetchUsers()
+  }
+
+  confirmDeleteUser(userId: string | number) {
+    this.$confirm('Tem certeza que deseja deletar o Usuário com TODOS os dados e histórico?', 'Atenção', {
+      confirmButtonText: 'Deletar',
+      cancelButtonText: 'Cancelar',
+      dangerouslyUseHTMLString: true,
+      type: 'warning'
+    }).then(() => {
+      this.openFullScreenLoading()
+      // this.deletePatient(patientId)
+    });
+  }
+
+  async deleteUser(userId: string | number) {
+    try {
+      await httpDelete(`${apiRoutes.users}/${userId}`);
+      this.$notify.success({
+        title: "Sucesso!",
+        message: 'Usuário excluido com sucesso!'
+      })
+      await this.fetchUsers()
+    } catch (err: any) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível deletar o paciente.'
+      })
+    } finally {
+      this.loadingFull.close();
+    }
   }
 }
 </script>
@@ -87,16 +162,5 @@ export default class CreateUser extends Vue {
 .row-main {
   display: flex;
   justify-content: center;
-}
-.row-action {
-  margin: 2rem 0;
-  display: flex;
-  justify-content: end;
-}
-
-.card-header {
-  display: flex;
-  justify-content: end;
-  margin-bottom: .5rem;
 }
 </style>

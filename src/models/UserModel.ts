@@ -1,4 +1,5 @@
 export class UserModel {
+    id: number;
     name: string;
     email: string;
     user_type: number;
@@ -8,7 +9,9 @@ export class UserModel {
     number_category: string;
     is_first_access: boolean;
 
-    constructor(name = '',
+    constructor(
+                id = 0,
+                name = '',
                 email = '',
                 user_type = 1,
                 birthdate = '',
@@ -17,6 +20,7 @@ export class UserModel {
                 password = '',
                 password_confirmation = ''
     ) {
+        this.id = id;
         this.password = password;
         this.password_confirmation = password_confirmation;
         this.email = email;

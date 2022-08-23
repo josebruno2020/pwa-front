@@ -13,7 +13,7 @@
               v-loading="loading"
               :data="patients"
               style="width: 100%"
-              empty-text="Nenhum paciente">
+              empty-text="Nenhum registro">
             <el-table-column
                 prop="name"
                 label="Nome">
@@ -248,10 +248,6 @@ export default class ListPatient extends Vue {
   showPatientChart = false
 
   loadingFull: ElLoadingComponent
-
-  test() {
-    console.log(this.patientSearch)
-  }
 
   created() {
     this.fetchPatients();

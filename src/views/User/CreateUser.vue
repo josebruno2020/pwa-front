@@ -106,7 +106,6 @@ export default class CreateUser extends Vue {
   }
 
   async submitForm() {
-    console.log(this.user)
     await this.$refs['user-form'].validate((valid: boolean) => {
       if (valid) return this.saveUser();
     });
