@@ -26,6 +26,12 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/Auth/ChangePassword.vue'),
   },
   {
+    path: '/resetar-senha/:token',
+    name: 'resetPassword',
+    component: () => import('../views/Auth/ResetPassword.vue'),
+    props: true
+  },
+  {
     path: '/esqueci-senha',
     name: 'password',
     component: () => import('@/views/Auth/Password.vue')

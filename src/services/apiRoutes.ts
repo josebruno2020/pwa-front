@@ -1,6 +1,8 @@
 export const apiRoutes = {
   login: '/auth/login',
   changePassword: '/auth/change-password',
+  password: '/auth/forgot-password',
+  resetPassword: '/auth/reset-password',
   users: '/users',
   patients: '/patients',
   sickness: '/sickness',

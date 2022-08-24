@@ -1,13 +1,12 @@
 <template>
   <main>
-    <page-title title="Mudar a senha"/>
-
+    <page-title title="Resetar a senha"/>
     <el-row :gutter="20" class="row-main">
       <el-col :span="20">
         <el-card class="card" shadow="hover">
           <div slot="header">
             <h5>
-              Para sua segurança, é necessário mudar a senha no primeiro acesso!
+              Agora você pode definir a sua nova senha!
             </h5>
           </div>
 
@@ -26,33 +25,50 @@
             </div>
           </el-form>
         </el-card>
+        <router-link class="text-sm" :to="{name:'login'}">Ir para Login</router-link>
       </el-col>
+
     </el-row>
 
   </main>
 </template>
 
 <script lang="ts">
-import {Vue} from "vue-property-decorator";
-import Component from "vue-class-component";
-import ChangePasswordModel from "@/models/ChangePasswordModel";
+
+import {Component, Prop, Vue} from "vue-property-decorator";
 import PageTitle from "@/components/shared/PageTitle.vue";
-import ErrorForm from "@/components/shared/ErrorForm.vue";
+import ChangePasswordModel from "@/models/ChangePasswordModel";
+import {changePasswordRules} from "@/helpers/validation/change-password";
 import {httpPost} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import {VForm} from "@/helpers/VFormType";
-import {changePasswordRules} from "@/helpers/validation/change-password";
 
 @Component({
+  name: 'ResetPassword',
+  props: ['token'],
   components: {
-    PageTitle,
-    ErrorForm
+    PageTitle
   }
 })
-export default class ChangePassword extends Vue {
+
+export default class ResetPassword extends Vue {
   $refs!: {
     form: VForm
   }
+  @Prop({
+    type: String
+  })
+  token
+
+  email
+
+  created() {
+    this.email = this.$route.query?.email
+
+    console.log(this.email)
+  }
+
+
   model: ChangePasswordModel = new ChangePasswordModel();
   userId = this.$store.state.user.id;
   loading = false
@@ -78,32 +94,41 @@ export default class ChangePassword extends Vue {
     await this.$refs['password-form'].validate((valid: boolean) => {
       if (valid) {
         this.loading = true
-        return this.changePassword();
+        return this.resetPassword();
       }
     });
   }
 
-  async changePassword() {
+  async resetPassword() {
     try {
-      await httpPost(`${apiRoutes.changePassword}/${this.userId}`, this.model);
+      await httpPost(`${apiRoutes.resetPassword}`, {
+        password: this.model.password,
+        token: this.token,
+        email: this.email
+      });
       this.$notify.success({
         title: 'Sucesso!',
-        message: 'Nova senha salva com sucesso!'
+        message: 'Senha resetada com sucesso!'
       })
-      return this.$router.push({name: 'home'});
+      return this.$router.push({name: 'login'});
     } catch (err: any) {
+      let message = 'Não foi possivel resetar a senha. Tente novamente mais tarde!'
+      if (err.response?.status === 403) {
+        message = 'O Link está inválido. Solicite um novo na página: Esqueci minha Senha'
+      }
       this.$notify.error({
         title: 'Erro!',
-        message: 'Não foi possivel mudar a senha. Tente novamente mais tarde!'
+        message
       })
     } finally {
       this.loading = false;
     }
   }
+
 }
 </script>
 
-<style lang="sass">
+<style scoped lang="sass">
 .row-main
   width: 100vw
   display: flex
@@ -116,5 +141,6 @@ export default class ChangePassword extends Vue {
 .footer
   display: flex
   justify-content: center
+
 
 </style>

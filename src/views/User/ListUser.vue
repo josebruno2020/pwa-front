@@ -40,7 +40,7 @@
           <el-pagination
               v-if="content"
               :current-page="page"
-              :page-size="2"
+              :page-size="10"
               :pager-count="5"
               layout="prev, pager, next"
               :total="content.total"

@@ -93,7 +93,7 @@ export default {
       return this.logged = true;
     }
 
-    return this.$router.push('/login');
+    // return this.$router.push('/login');
   },
 
   mounted() {
@@ -134,11 +134,11 @@ export default {
   },
 
   updated() {
-    // this.disabledMenu();
     if (this.$store.state.token) {
+      this.getUsers();
       return this.logged = true;
+
     }
-    this.getUsers();
     return this.logged = false;
   },
 

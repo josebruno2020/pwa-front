@@ -1,6 +1,7 @@
 <template>
   <main>
     <img alt="Vue logo" src="../../assets/logo.png" class="logo">
+    <h1 class="title">Monintox</h1>
     <p class="text-center">Informe suas credenciais para continuar</p>
     <div class="login-form">
       <el-form class="form" ref="login-form" :model="model" :rules="rules" label-width="120px" label-position="top"
@@ -10,7 +11,7 @@
         </el-form-item>
 
         <el-form-item label="Senha" prop="password">
-          <el-input type="password" v-model="model.password"></el-input>
+          <el-input type="password" v-model="model.password" show-password></el-input>
         </el-form-item>
 
         <div class="submit-row">
@@ -20,7 +21,7 @@
 
 
     </div>
-    <router-link class="text-sm" :to="{name:'password'}">Esqueci senha</router-link>
+    <router-link class="text-sm" :to="{name:'password'}">Esqueci a senha</router-link>
   </main>
 
 </template>
@@ -87,6 +88,10 @@ main {
 .logo {
   margin-bottom: 3rem;
   max-width: 10rem;
+}
+
+.title {
+  text-align: center;
 }
 
 .form {

@@ -1,10 +1,10 @@
 <template>
   <main>
-    <page-title title="Página inicial"/>
+    <page-title title="Página inicial - Monintox"/>
     <section class="home">
 
       <img alt="Vue logo" src="../assets/logo.png" class="logo">
-      <p class="text-center">Seja bem-vindo, {{ loggedName }}</p>
+      <p class="text-center">Seja bem-vindo(a), {{ loggedName }}</p>
 
       <div class="button">
         <router-link :to="{name: 'createPatient'}">
