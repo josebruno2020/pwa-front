@@ -27,7 +27,6 @@
               <template slot="header">
                 <el-input
                     v-model="patientSearch"
-                    @input="test"
                     placeholder="Buscar..."
                     size="mini" />
               </template>
@@ -121,7 +120,7 @@
       <h1 class="patient-title">Notificações</h1>
 
       <ul>
-        <li>A fazer....</li>
+        <li class="link blue" @click="openAutoPersonal(patient)">Cadastro Violência Interpessoal/Autoprovocada</li>
       </ul>
     </el-dialog>
 
@@ -185,6 +184,15 @@
         width="90%">
       <change-status ref="changeStatusModal" @submit="endChangeStatus()"/>
     </el-dialog>
+
+
+    <el-dialog
+        title="Violência Interpessoal/Autoprovocada"
+        :visible.sync="showNotificationAutoPersonal"
+        :fullscreen="true">
+      <auto-personal ref="autoPersonal" />
+<!--      <change-status ref="changeStatusModal" @submit="endChangeStatus()"/>-->
+    </el-dialog>
   </main>
 </template>
 
@@ -208,6 +216,7 @@ import HistoryVitalSigns from "@/components/patient/HistoryVitalSigns.vue";
 import {ElLoadingComponent} from "element-ui/types/loading";
 import ChangeStatus from "@/components/patient/ChangeStatus.vue";
 import PatientChart from "@/components/patient/PatientChart.vue";
+import AutoPersonal from "@/components/notifications/AutoPersonal.vue";
 
 @Component({
   components: {
@@ -221,7 +230,8 @@ import PatientChart from "@/components/patient/PatientChart.vue";
     HistoryDoctorReport,
     HistoryVitalSigns,
     ChangeStatus,
-    PatientChart
+    PatientChart,
+    AutoPersonal
   }
 })
 export default class ListPatient extends Vue {
@@ -246,6 +256,8 @@ export default class ListPatient extends Vue {
   showVitalSignsHistoryModal = false
   showChangeStatusModal = false
   showPatientChart = false
+
+  showNotificationAutoPersonal = false
 
   loadingFull: ElLoadingComponent
 
@@ -357,6 +369,14 @@ export default class ListPatient extends Vue {
     this.showPatientChart = true
     this.$nextTick(() => {
       return this.$refs['patientChartModal'].setInformation(patient)
+    })
+  }
+
+
+  async openAutoPersonal(patient: PatientModel) {
+    this.showNotificationAutoPersonal = true
+    this.$nextTick(() => {
+      return this.$refs['autoPersonal'].setInformation(patient)
     })
   }
 

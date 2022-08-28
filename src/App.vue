@@ -135,7 +135,7 @@ export default {
 
   updated() {
     if (this.$store.state.token) {
-      this.getUsers();
+      // this.getUsers();
       return this.logged = true;
 
     }
