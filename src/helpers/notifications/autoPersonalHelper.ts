@@ -29,6 +29,25 @@ export const _06 = [
   },
 ];
 
+export const _12 = [
+  {
+    label: "1- Hora",
+    value: 1,
+  },
+  {
+    label: "2- Dia",
+    value: 2,
+  },
+  {
+    label: "3- Mês",
+    value: 3,
+  },
+  {
+    label: "4- Ano",
+    value: 4,
+  },
+];
+
 export const _13 = [
   {
     label: "M - Masculino",
@@ -102,12 +121,52 @@ export const _15 = [
   },
 ];
 
-//TODO escolaridade
 export const _16 = [
   {
-
-  }
-]
+    label: "0- Analfabeto",
+    value: 1,
+  },
+  {
+    label: "1- 1ª a 4ª série incompleta do EF (antigo primário ou 1º grau)",
+    value: 2,
+  },
+  {
+    label: "2- 4ª série completa do EF (antigo primário ou 1º grau)",
+    value: 3,
+  },
+  {
+    label: "3- 5ª à 8ª série incompleta do EF (antigo ginásio ou 1º grau)",
+    value: 4,
+  },
+  {
+    label: "4- Ensino fundamental completo (antigo ginásio ou 1º grau)",
+    value: 5,
+  },
+  {
+    label: "5- Ensino médio incompleto (antigo colegial ou 2º grau )",
+    value: 6,
+  },
+  {
+    label: "6- Ensino médio completo (antigo colegial ou 2º grau )",
+    value: 7,
+  },
+  {
+    label: "7- Educação superior incompleta",
+    value: 8,
+  },
+  {
+    label: "8- Educação superior completa",
+    value: 9,
+  },
+  {
+    label: "9- Ignorado",
+    value: 10,
+  },
+  {
+    label: "10- Não se aplica",
+    value: 11,
+  },
+];
 
 export const _31 = [
   {

@@ -716,7 +716,7 @@ import {
   _65,
   _66,
   _67
-} from "@/helpers/notifications/arraysToChoose";
+} from "@/helpers/notifications/autoPersonalHelper";
 import {UserModel} from "@/models/UserModel";
 import { httpPost } from "@/services/http";
 import { apiRoutes } from "@/services/apiRoutes";
