@@ -102,6 +102,13 @@ export const _15 = [
   },
 ];
 
+//TODO escolaridade
+export const _16 = [
+  {
+
+  }
+]
+
 export const _31 = [
   {
     label: "1- Urbana",
@@ -150,7 +157,7 @@ export const _35 = [
 
 export const _36 = [
   {
-    label: "1- Heterossexua",
+    label: "1- Heterossexual",
     value: 1,
   },
   {
@@ -212,31 +219,31 @@ export const _38 = [
 export const _39 = [
   {
     label: "Deficiência Física",
-    value: 1,
+    value: 0,
   },
   {
     label: "Deficiência Intelectual",
-    value: 2,
+    value: 1,
   },
   {
     label: "Deficiência visual",
-    value: 3,
+    value: 2,
   },
   {
     label: "Deficiência auditiva",
-    value: 4,
+    value: 3,
   },
   {
     label: "Transtorno mental",
-    value: 5,
+    value: 4,
   },
   {
     label: "Transtorno de comportamento",
-    value: 6,
+    value: 5,
   },
   {
     label: "Outras",
-    value: 7,
+    value: 6,
   },
 ];
 
@@ -363,150 +370,150 @@ export const _55 = [
 export const _56 = [
   {
     label: "Física",
-    value: 1,
+    value: 0,
   },
   {
     label: "Psicológica/Moral",
-    value: 2,
+    value: 1,
   },
   {
     label: "Tortura",
-    value: 3,
+    value: 2,
   },
   {
     label: "Sexual",
-    value: 4,
+    value: 3,
   },
   {
     label: "Tráfico de seres humanos",
-    value: 5,
+    value: 4,
   },
   {
     label: "Financeira/Econômica",
-    value: 6,
+    value: 5,
   },
   {
     label: "Negligência/Abandono",
-    value: 7,
+    value: 6,
   },
   {
     label: "Trabalho infantil",
-    value: 8,
+    value: 7,
   },
   {
     label: "Intervenção legal",
-    value: 9,
+    value: 8,
   },
   {
     label: "Outros",
-    value: 10,
+    value: 9,
   },
 ];
 
 export const _57 = [
   {
     label: "Força corporal/espancamento",
-    value: 1,
+    value: 0,
   },
   {
     label: "Enforcamento",
-    value: 2,
+    value: 1,
   },
   {
     label: "Obj. contundente",
-    value: 3,
+    value: 2,
   },
   {
     label: "Obj. pérfurocortante",
-    value: 4,
+    value: 3,
   },
   {
     label: "Substância/Obj. quente",
-    value: 5,
+    value: 4,
   },
   {
     label: "Envenenamento, Intoxicação",
-    value: 6,
+    value: 5,
   },
   {
     label: "Arma de fogo",
-    value: 7,
+    value: 6,
   },
   {
     label: "Ameaça",
-    value: 8,
+    value: 7,
   },
   {
     label: "Outro",
-    value: 9,
+    value: 8,
   },
 ];
 
 export const _58 = [
   {
     label: "Assédio sexual",
-    value: 1,
+    value: 0,
   },
   {
     label: "Estupro",
-    value: 2,
+    value: 1,
   },
   {
     label: "Pornografia infantil",
-    value: 3,
+    value: 2,
   },
   {
     label: "Exploração sexual ",
-    value: 4,
+    value: 3,
   },
   {
     label: "Outros",
-    value: 5,
+    value: 4,
   },
 ];
 
 export const _59 = [
   {
     label: "Profilaxia DST",
-    value: 1,
+    value: 0,
   },
   {
     label: "Profilaxia HIV",
-    value: 2,
+    value: 1,
   },
   {
     label: "Profilaxia Hepatite B",
-    value: 3,
+    value: 2,
   },
   {
     label: "Coleta de sangue",
-    value: 4,
+    value: 3,
   },
   {
     label: "Coleta de sêmen ",
-    value: 5,
+    value: 4,
   },
   {
     label: "Coleta de secreção vagina",
-    value: 6,
+    value: 5,
   },
   {
     label: "Contracepção de emergência",
-    value: 7,
+    value: 6,
   },
   {
     label: "Aborto previsto em le",
-    value: 8,
+    value: 7,
   },
 ];
 
 export const _60 = [
   {
-    label: "1- Sim",
+    label: "1- Um",
     value: 1,
   },
   {
-    label: "2- Não",
+    label: "2- Dois ou mais",
     value: 2,
   },
   {
@@ -518,75 +525,75 @@ export const _60 = [
 export const _61 = [
   {
     label: "Pai",
-    value: 1,
+    value: 0,
   },
   {
     label: "Mãe",
-    value: 2,
+    value: 1,
   },
   {
     label: "Padrasto",
-    value: 3,
+    value: 2,
   },
   {
     label: "Madrasta",
-    value: 4,
+    value: 3,
   },
   {
     label: "Cônjuge",
-    value: 5,
+    value: 4,
   },
   {
     label: "Ex-Cônjuge",
-    value: 6,
+    value: 5,
   },
   {
     label: "Namorado(a)",
-    value: 7,
+    value: 6,
   },
   {
     label: "Ex-Namorado(a)",
-    value: 8,
+    value: 7,
   },
   {
     label: "Filho(a)",
-    value: 9,
+    value: 8,
   },
   {
     label: "Irmão(ã)",
-    value: 10,
+    value: 9,
   },
   {
     label: "Amigos/conhecidos",
-    value: 11,
+    value: 10,
   },
   {
     label: "Desconhecido(a)",
-    value: 12,
+    value: 11,
   },
   {
     label: "Cuidador(a)",
-    value: 13,
+    value: 12,
   },
   {
     label: "Patrão/chefe",
-    value: 14,
+    value: 13,
   },
   {
     label: "Pessoa com relação institucional",
-    value: 15,
+    value: 14,
   },
   {
     label: "Policial/agente da lei",
-    value: 16,
+    value: 15,
   },
   {
     label: "Própria pessoa",
-    value: 17,
+    value: 16,
   },
   {
     label: "Outros",
-    value: 18,
+    value: 17,
   },
 ];
 
@@ -654,56 +661,56 @@ export const _64 = [
 export const _65 = [
   {
     label: "Rede da Saúde (Unidade Básica de Saúde,hospital,outras)",
-    value: 1,
+    value: 0,
   },
   {
     label: "Rede da Assistência Social (CRAS, CREAS, outras)",
-    value: 2,
+    value: 1,
   },
   {
     label: "Rede da Educação (Creche, escola, outras)",
-    value: 3,
+    value: 2,
   },
   {
     label:
       "Rede de Atendimento à Mulher (Centro Especializado de Atendimento à Mulher, Casa da Mulher Brasileira, outras)",
-    value: 4,
+    value: 3,
   },
   {
     label: "Conselho do Idoso",
-    value: 5,
+    value: 4,
   },
   {
     label: "Delegacia de Atendimento ao Idoso",
-    value: 6,
+    value: 5,
   },
   {
     label: "Centro de Referência dos Direitos Humanos",
-    value: 7,
+    value: 6,
   },
   {
     label: "Ministério Público",
-    value: 8,
+    value: 7,
   },
   {
     label: "Delegacia Especializada de Proteção à Criança e Adolescente",
-    value: 9,
+    value: 8,
   },
   {
     label: "Delegacia de Atendimento à Mulher",
-    value: 10,
+    value: 9,
   },
   {
     label: "Outras delegacias",
-    value: 11,
+    value: 10,
   },
   {
     label: "Justiça da Infância e da Juventude",
-    value: 12,
+    value: 11,
   },
   {
     label: "Defensoria Pública",
-    value: 13,
+    value: 12,
   },
 ];
 

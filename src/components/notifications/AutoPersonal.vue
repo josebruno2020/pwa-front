@@ -385,7 +385,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item v-if="model._52 && model._52 === '09'"  label="52- Outro">
+        <el-form-item label="52- Outro">
           <el-input v-model="model._5205"></el-input>
         </el-form-item>
 
@@ -425,7 +425,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item v-if="model._55 && model._55 === '09'"  label="55- Outro">
+        <el-form-item  label="55- Outro">
           <el-input v-model="model._5505"></el-input>
         </el-form-item>
 
@@ -538,8 +538,7 @@
             </div>
 
             <div>
-              {{ v.label }}
-              -
+              {{ v.label }} -
               <strong>{{ model._61[v.value] }}</strong>
             </div>
 
@@ -579,21 +578,102 @@
           </el-select>
         </el-form-item>
 
+
+
+
       </div>
 
       <p class="subtitle">Encaminhamento</p>
       <div class="form-flex">
+        <el-form-item class="form-choose" v-if="model._65" label="65- Encaminhamento:">
+          <div v-for="(v, index) in value65" :key="index" class="form-select-item">
+            <div>
+              <el-button plain type="success" size="mini" @click="setInformationInArray(model._65, 1, v.value)">Sim</el-button>
+              <el-button plain type="danger" size="mini" @click="setInformationInArray(model._65, 2, v.value)">Não</el-button>
+              <el-button plain type="info" size="mini" @click="setInformationInArray(model._65, 9, v.value)">Ignorado</el-button>
+            </div>
 
+            <div>
+              {{ v.label }} -
+              <strong>{{ model._65[v.value] }}</strong>
+            </div>
+
+          </div>
+        </el-form-item>
       </div>
 
       <p class="subtitle">Dados finais</p>
       <div class="form-flex">
+        <el-form-item label="66- Violência Relacionada ao Trabalho">
+          <el-select v-model="model._66" clearable placeholder="selecione..." filterable>
+            <el-option
+                v-for="(v, index) in value66"
+                :key="index"
+                :label="v.label"
+                :value="v.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
+        <el-form-item label="67- Se sim, foi emitida a Comunicação de Acidente do Trabalho (CAT)">
+          <el-select v-model="model._67" clearable placeholder="selecione..." filterable>
+            <el-option
+                v-for="(v, index) in value67"
+                :key="index"
+                :label="v.label"
+                :value="v.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+
+        <el-form-item  label="68- Circunstância da lesão">
+          <el-input v-model="model._68" maxlength="4"></el-input>
+        </el-form-item>
+
+        <el-form-item  label="69- Data de encerramento">
+          <el-input v-model="model._69" type="date"></el-input>
+        </el-form-item>
       </div>
 
       <h5>Informações complementares e observações</h5>
       <div class="form-flex">
+        <el-form-item  label="Nome do acompanhante">
+          <el-input v-model="additional.companion"></el-input>
+        </el-form-item>
 
+        <el-form-item  label="Vínculo/grau de parentesco">
+          <el-input v-model="additional.relation"></el-input>
+        </el-form-item>
+
+        <el-form-item  label="(DDD) Telefone">
+          <el-input v-model="additional.phone"></el-input>
+        </el-form-item>
+      </div>
+
+      <div class="form-flex">
+        <el-form-item  label="Observações Adicionais:">
+          <el-input v-model="additional.obs" type="textarea" :rows="3"></el-input>
+        </el-form-item>
+      </div>
+
+      <p class="subtitle">Notificador</p>
+      <div class="form-flex">
+        <el-form-item  label="Município/Unidade de Saúde">
+          <el-input v-model="additional.city"></el-input>
+        </el-form-item>
+
+        <el-form-item  label="Cód. da Unid. de Saúde/CNES">
+          <el-input v-model="additional.code" maxlength="8"></el-input>
+        </el-form-item>
+
+        <el-form-item  label="Nome">
+          <el-input v-model="additional.name" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item  label="Função">
+          <el-input v-model="additional.function"></el-input>
+        </el-form-item>
       </div>
 
       <div class="is-flex is-justify-end">
@@ -608,7 +688,38 @@
 import {Component, Vue} from "vue-property-decorator";
 import {PatientModel} from "@/models/PatientModel";
 import {states} from "@/helpers/form/states";
-import {_06, _13, _14, _15, _31, _35, _36, _37, _38, _39, _52, _53, _54, _55, _56, _57, _58, _59, _60, _61, _62, _63, _64} from "@/helpers/notifications/arraysToChoose";
+import {
+  _06,
+  _13,
+  _14,
+  _15,
+  _16,
+  _31,
+  _35,
+  _36,
+  _37,
+  _38,
+  _39,
+  _52,
+  _53,
+  _54,
+  _55,
+  _56,
+  _57,
+  _58,
+  _59,
+  _60,
+  _61,
+  _62,
+  _63,
+  _64,
+  _65,
+  _66,
+  _67
+} from "@/helpers/notifications/arraysToChoose";
+import {UserModel} from "@/models/UserModel";
+import { httpPost } from "@/services/http";
+import { apiRoutes } from "@/services/apiRoutes";
 
 @Component({
   name: 'AutoPersonal'
@@ -616,14 +727,17 @@ import {_06, _13, _14, _15, _31, _35, _36, _37, _38, _39, _52, _53, _54, _55, _5
 export default class AutoPersonal extends Vue {
   patient: PatientModel = new PatientModel()
   model = {}
-
+  additional = {}
   now = new Date()
+  user: UserModel = this.$store.state.user
   loading = false
   states = states
   value06 = _06
   value13 = _13
   value14 = _14
   value15 = _15
+  //TODO _16
+  value16 = _16
   value31 = _31
   value35 = _35
   value36 = _36
@@ -643,10 +757,15 @@ export default class AutoPersonal extends Vue {
   value62 = _62
   value63 = _63
   value64 = _64
+  value65 = _65
+  value66 = _66
+  value67 = _67
 
-  selectedValue39: number[] = []
 
   created() {
+    this.additional = {
+      name: this.user.name
+    }
     this.model = {
       _39: [],
       _56: [],
@@ -662,6 +781,7 @@ export default class AutoPersonal extends Vue {
     this.patient = patient
     this.model = {
       ...this.model,
+      patient_id: this.patient.id,
       _10: this.patient.name,
       _11: this.patient.birthdate,
       _18: this.patient.name_mother,
@@ -673,7 +793,6 @@ export default class AutoPersonal extends Vue {
       _30: this.patient.phone_number,
       _32: 'Brasil',
     }
-    this.selectedValue39 = []
   }
 
   private onlyNumbers(value: string) {
@@ -681,8 +800,13 @@ export default class AutoPersonal extends Vue {
   }
 
   submitForm() {
-    console.log(Object.entries(this.model))
-    //confirmar para salvar;
+    this.$confirm('Tem certeza que deseja finalizar o preenchimento do formulário?', 'Finalizar', {
+      confirmButtonText: 'Finalizar',
+      cancelButtonText: 'Cancelar',
+      type: 'warning'
+    }).then(() => {
+      this.handle();
+    })
   }
 
 
@@ -691,8 +815,21 @@ export default class AutoPersonal extends Vue {
   }
 
   async handle() {
-    alert('handle')
-    console.log(Object.entries(this.model))
+    try {
+      const {data} =  await httpPost(apiRoutes.notificationAutoPersonal, {
+        ...this.model,
+        ...this.additional
+      })
+      this.$notify.success({
+        title: 'Successo',
+        message: 'Notificação cadastrada com sucesso'
+      })
+    } catch (err: any) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível salvar as informações'
+      })
+    }
   }
 }
 
@@ -715,9 +852,12 @@ export default class AutoPersonal extends Vue {
 .el-select, .el-input
   width: 250px
 
-.form-choose
-  width: 330px
+.el-textarea
+  width: 500px
 
-//.form-select-item
-//  display: flex
+.form-choose
+  width: 400px
+  max-height: 350px
+  overflow-y: auto
+
 </style>
