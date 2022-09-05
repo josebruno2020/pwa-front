@@ -13,5 +13,6 @@ export const apiRoutes = {
   chat: '/chat',
   chatUsers: '/chat/users',
   chart: '/charts',
-  notificationAutoPersonal: '/notifications/auto-personal'
+  notificationAutoPersonal: '/notifications/auto-personal',
+  notificationIntoxication: '/notifications/intoxication',
 };

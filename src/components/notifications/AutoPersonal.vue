@@ -76,9 +76,19 @@
           <el-input v-model="model._11" type="date"></el-input>
         </el-form-item>
 
-        <!--         TODO -->
         <el-form-item label="12- Idade">
-          <el-input v-model="model._12"></el-input>
+          <el-input v-model="model._12" maxlength="3"></el-input>
+        </el-form-item>
+
+        <el-form-item label="12- Idade">
+          <el-select v-model="model._1205" clearable placeholder="selecione..." filterable>
+            <el-option
+                v-for="(v, index) in value12"
+                :key="index"
+                :label="v.label"
+                :value="v.value">
+            </el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="13- Sexo">
@@ -115,10 +125,9 @@
         </el-form-item>
 
         <el-form-item label="16- Escolaridade">
-          <!--          TODO-->
           <el-select v-model="model._16" clearable placeholder="selecione..." filterable>
             <el-option
-                v-for="(v, index) in value15"
+                v-for="(v, index) in value16"
                 :key="index"
                 :label="v.label"
                 :value="v.value">
@@ -432,16 +441,17 @@
         <el-form-item class="form-choose" v-if="model._56" label="56- Tipo de violência">
           <div v-for="(v, index) in value56" :key="index" class="form-select-item">
             <div>
+              {{ v.label }}-
+              <strong>{{ model._56[v.value] }}</strong>
+            </div>
+
+            <div>
               <el-button plain type="success" size="mini" @click="setInformationInArray(model._56, 1, v.value)">Sim</el-button>
               <el-button plain type="danger" size="mini" @click="setInformationInArray(model._56, 2, v.value)">Não</el-button>
               <el-button plain type="info" size="mini" @click="setInformationInArray(model._56, 9, v.value)">Ignorado</el-button>
             </div>
 
-            <div>
-              {{ v.label }}
-              -
-              <strong>{{ model._56[v.value] }}</strong>
-            </div>
+
 
           </div>
         </el-form-item>
@@ -453,15 +463,13 @@
         <el-form-item class="form-choose" v-if="model._57" label="57- Meio de agressão">
           <div v-for="(v, index) in value57" :key="index" class="form-select-item">
             <div>
+              {{ v.label }} -
+              <strong>{{ model._57[v.value] }}</strong>
+            </div>
+            <div>
               <el-button plain type="success" size="mini" @click="setInformationInArray(model._57, 1, v.value)">Sim</el-button>
               <el-button plain type="danger" size="mini" @click="setInformationInArray(model._57, 2, v.value)">Não</el-button>
               <el-button plain type="info" size="mini" @click="setInformationInArray(model._57, 9, v.value)">Ignorado</el-button>
-            </div>
-
-            <div>
-              {{ v.label }}
-              -
-              <strong>{{ model._57[v.value] }}</strong>
             </div>
 
           </div>
@@ -477,17 +485,14 @@
         <el-form-item class="form-choose" v-if="model._58" label="58- Se ocorreu violência sexual, qual o tipo?">
           <div v-for="(v, index) in value58" :key="index" class="form-select-item">
             <div>
+              {{ v.label }} -
+              <strong>{{ model._58[v.value] }}</strong>
+            </div>
+            <div>
               <el-button plain type="success" size="mini" @click="setInformationInArray(model._58, 1, v.value)">Sim</el-button>
               <el-button plain type="danger" size="mini" @click="setInformationInArray(model._58, 2, v.value)">Não</el-button>
               <el-button plain type="info" size="mini" @click="setInformationInArray(model._58, 9, v.value)">Ignorado</el-button>
             </div>
-
-            <div>
-              {{ v.label }}
-              -
-              <strong>{{ model._58[v.value] }}</strong>
-            </div>
-
           </div>
         </el-form-item>
 
@@ -498,18 +503,15 @@
         <el-form-item class="form-choose" v-if="model._59" label="59- Procedimento realizado">
           <div v-for="(v, index) in value59" :key="index" class="form-select-item">
             <div>
+              {{ v.label }}-
+              <strong>{{ model._59[v.value] }}</strong>
+            </div>
+            <div>
               <el-button plain type="success" size="mini" @click="setInformationInArray(model._59, 1, v.value)">Sim</el-button>
               <el-button plain type="danger" size="mini" @click="setInformationInArray(model._59, 2, v.value)">Não</el-button>
               <el-button plain type="warning" size="mini" @click="setInformationInArray(model._59, 8, v.value)">Não se aplica</el-button>
               <el-button plain type="info" size="mini" @click="setInformationInArray(model._59, 9, v.value)">Ignorado</el-button>
             </div>
-
-            <div>
-              {{ v.label }}
-              -
-              <strong>{{ model._59[v.value] }}</strong>
-            </div>
-
           </div>
         </el-form-item>
 
@@ -532,15 +534,16 @@
         <el-form-item class="form-choose" v-if="model._61" label="61- Vínculo/grau de parentesco com a pessoa atendida">
           <div v-for="(v, index) in value61" :key="index" class="form-select-item">
             <div>
+              {{ v.label }} -
+              <strong>{{ model._61[v.value] }}</strong>
+            </div>
+            <div>
               <el-button plain type="success" size="mini" @click="setInformationInArray(model._61, 1, v.value)">Sim</el-button>
               <el-button plain type="danger" size="mini" @click="setInformationInArray(model._61, 2, v.value)">Não</el-button>
               <el-button plain type="info" size="mini" @click="setInformationInArray(model._61, 9, v.value)">Ignorado</el-button>
             </div>
 
-            <div>
-              {{ v.label }} -
-              <strong>{{ model._61[v.value] }}</strong>
-            </div>
+
 
           </div>
         </el-form-item>
@@ -588,16 +591,14 @@
         <el-form-item class="form-choose" v-if="model._65" label="65- Encaminhamento:">
           <div v-for="(v, index) in value65" :key="index" class="form-select-item">
             <div>
+              {{ v.label }} -
+              <strong>{{ model._65[v.value] }}</strong>
+            </div>
+            <div>
               <el-button plain type="success" size="mini" @click="setInformationInArray(model._65, 1, v.value)">Sim</el-button>
               <el-button plain type="danger" size="mini" @click="setInformationInArray(model._65, 2, v.value)">Não</el-button>
               <el-button plain type="info" size="mini" @click="setInformationInArray(model._65, 9, v.value)">Ignorado</el-button>
             </div>
-
-            <div>
-              {{ v.label }} -
-              <strong>{{ model._65[v.value] }}</strong>
-            </div>
-
           </div>
         </el-form-item>
       </div>
@@ -677,6 +678,7 @@
       </div>
 
       <div class="is-flex is-justify-end">
+        <el-button type="light" @click="close">Cancelar</el-button>
         <el-button :loading="loading" type="success" native-type="submit">Salvar</el-button>
       </div>
 
@@ -690,6 +692,7 @@ import {PatientModel} from "@/models/PatientModel";
 import {states} from "@/helpers/form/states";
 import {
   _06,
+  _12,
   _13,
   _14,
   _15,
@@ -733,10 +736,10 @@ export default class AutoPersonal extends Vue {
   loading = false
   states = states
   value06 = _06
+  value12 = _12
   value13 = _13
   value14 = _14
   value15 = _15
-  //TODO _16
   value16 = _16
   value31 = _31
   value35 = _35
@@ -767,6 +770,7 @@ export default class AutoPersonal extends Vue {
       name: this.user.name
     }
     this.model = {
+      _03: this.now.toLocaleDateString()?.split('/')?.reverse()?.join('-'),
       _39: [],
       _56: [],
       _57: [],
@@ -816,7 +820,7 @@ export default class AutoPersonal extends Vue {
 
   async handle() {
     try {
-      const {data} =  await httpPost(apiRoutes.notificationAutoPersonal, {
+      await httpPost(apiRoutes.notificationAutoPersonal, {
         ...this.model,
         ...this.additional
       })
@@ -824,12 +828,17 @@ export default class AutoPersonal extends Vue {
         title: 'Successo',
         message: 'Notificação cadastrada com sucesso'
       })
+      this.close();
     } catch (err: any) {
       this.$notify.error({
         title: 'Erro',
         message: 'Não foi possível salvar as informações'
       })
     }
+  }
+
+  close() {
+    this.$emit('close');
   }
 }
 

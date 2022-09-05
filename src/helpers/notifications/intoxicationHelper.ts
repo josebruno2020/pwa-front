@@ -455,11 +455,11 @@ export const _54 = [
 
 export const _55 = [
   {
-    label: "01- Uso Habitua",
+    label: "01- Uso Habitual",
     value: "01",
   },
   {
-    label: "02- Acidenta",
+    label: "02- Acidental",
     value: "02",
   },
   {

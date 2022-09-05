@@ -119,8 +119,23 @@
 
       <h1 class="patient-title">Notificações</h1>
 
-      <ul>
-        <li class="link blue" @click="openAutoPersonal(patient)">Cadastro Violência Interpessoal/Autoprovocada</li>
+      <ul class="li-link">
+        <li  @click="openAutoPersonal(patient)">
+          <span class="link blue">Cadastro Violência Interpessoal/Autoprovocada</span>
+        </li>
+
+        <li @click="printAutoPersonal(patient)">
+          <span  class="link blue">Impressão Violência Interpessoal/Autoprovocada</span>
+        </li>
+
+
+        <li  @click="openIntoxication(patient)">
+          <span class="link blue">Cadastro Intoxicação Exógena</span>
+        </li>
+
+        <li @click="printIntoxication(patient)">
+          <span  class="link blue">Impressão Intoxicação Exógena</span>
+        </li>
       </ul>
     </el-dialog>
 
@@ -190,8 +205,14 @@
         title="Violência Interpessoal/Autoprovocada"
         :visible.sync="showNotificationAutoPersonal"
         :fullscreen="true">
-      <auto-personal ref="autoPersonal" />
-<!--      <change-status ref="changeStatusModal" @submit="endChangeStatus()"/>-->
+      <auto-personal ref="autoPersonal" @close="showNotificationAutoPersonal = false"/>
+    </el-dialog>
+
+    <el-dialog
+        title="Intoxicação Exógena"
+        :visible.sync="showNotificationIntoxication"
+        :fullscreen="true">
+      <intoxication ref="intoxication" @close="showNotificationIntoxication = false"/>
     </el-dialog>
   </main>
 </template>
@@ -217,6 +238,8 @@ import {ElLoadingComponent} from "element-ui/types/loading";
 import ChangeStatus from "@/components/patient/ChangeStatus.vue";
 import PatientChart from "@/components/patient/PatientChart.vue";
 import AutoPersonal from "@/components/notifications/AutoPersonal.vue";
+import Intoxication from "@/components/notifications/Intoxication.vue";
+import axios from "axios";
 
 @Component({
   components: {
@@ -231,7 +254,8 @@ import AutoPersonal from "@/components/notifications/AutoPersonal.vue";
     HistoryVitalSigns,
     ChangeStatus,
     PatientChart,
-    AutoPersonal
+    AutoPersonal,
+    Intoxication
   }
 })
 export default class ListPatient extends Vue {
@@ -258,6 +282,7 @@ export default class ListPatient extends Vue {
   showPatientChart = false
 
   showNotificationAutoPersonal = false
+  showNotificationIntoxication = false
 
   loadingFull: ElLoadingComponent
 
@@ -378,6 +403,84 @@ export default class ListPatient extends Vue {
     this.$nextTick(() => {
       return this.$refs['autoPersonal'].setInformation(patient)
     })
+  }
+
+  async openIntoxication(patient: PatientModel) {
+    this.showNotificationIntoxication = true
+    this.$nextTick(() => {
+      return this.$refs['intoxication'].setInformation(patient)
+    })
+  }
+
+  async printAutoPersonal(patient: PatientModel) {
+    this.openFullScreenLoading()
+    try {
+      const { data: {content} } = await httpGet(`${apiRoutes.notificationAutoPersonal}/${patient.id}`);
+      if (!content.length) {
+        return this.$notify.info({
+          title: 'Não encontrado',
+          message: 'O paciente não possui a notificação para impressão.'
+        })
+      }
+      const {data} = await axios.post(`${process.env.VUE_APP_API_NODE_URL}/reports/auto-personal`, content, {
+        responseType: 'arraybuffer',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/pdf'
+        }
+      })
+      const fileName = `${patient.name.split(' ')[0]}-${new Date().getTime()}.pdf`
+      this.downloadFile(data, fileName)
+
+    } catch (err: any) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível imprimir a notificação.'
+      })
+    } finally {
+      this.loadingFull.close()
+    }
+  }
+
+
+  async printIntoxication(patient: PatientModel) {
+    this.openFullScreenLoading()
+    try {
+      const { data: {content} } = await httpGet(`${apiRoutes.notificationIntoxication}/${patient.id}`);
+      if (!content.length) {
+        return this.$notify.info({
+          title: 'Não encontrado',
+          message: 'O paciente não possui a notificação para impressão.'
+        })
+      }
+      const {data} = await axios.post(`${process.env.VUE_APP_API_NODE_URL}/reports/intoxication`, content, {
+        responseType: 'arraybuffer',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/pdf'
+        }
+      })
+      const fileName = `${patient.name.split(' ')[0]}-${new Date().getTime()}.pdf`
+      this.downloadFile(data, fileName)
+
+    } catch (err: any) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível imprimir a notificação.'
+      })
+    } finally {
+      this.loadingFull.close()
+    }
+  }
+
+  private downloadFile(data, fileName: string) {
+
+    const url = window.URL.createObjectURL(new Blob([data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName); //or any other extension
+    document.body.appendChild(link);
+    link.click();
   }
 
 
