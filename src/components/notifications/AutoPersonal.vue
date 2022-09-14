@@ -629,7 +629,7 @@
 
 
         <el-form-item  label="68- Circunstância da lesão">
-          <el-input v-model="model._68" maxlength="4"></el-input>
+          <el-input v-model="model._68" ></el-input>
         </el-form-item>
 
         <el-form-item  label="69- Data de encerramento">
@@ -640,40 +640,40 @@
       <h5>Informações complementares e observações</h5>
       <div class="form-flex">
         <el-form-item  label="Nome do acompanhante">
-          <el-input v-model="additional.companion"></el-input>
+          <el-input v-model="model.companion"></el-input>
         </el-form-item>
 
         <el-form-item  label="Vínculo/grau de parentesco">
-          <el-input v-model="additional.relation"></el-input>
+          <el-input v-model="model.relation"></el-input>
         </el-form-item>
 
         <el-form-item  label="(DDD) Telefone">
-          <el-input v-model="additional.phone"></el-input>
+          <el-input v-model="model.phone"></el-input>
         </el-form-item>
       </div>
 
       <div class="form-flex">
         <el-form-item  label="Observações Adicionais:">
-          <el-input v-model="additional.obs" type="textarea" :rows="3"></el-input>
+          <el-input v-model="model.obs" type="textarea" :rows="3"  maxlength="180" show-word-limit></el-input>
         </el-form-item>
       </div>
 
       <p class="subtitle">Notificador</p>
       <div class="form-flex">
         <el-form-item  label="Município/Unidade de Saúde">
-          <el-input v-model="additional.city"></el-input>
+          <el-input v-model="model.city"></el-input>
         </el-form-item>
 
         <el-form-item  label="Cód. da Unid. de Saúde/CNES">
-          <el-input v-model="additional.code" maxlength="8"></el-input>
+          <el-input v-model="model.code" maxlength="8"></el-input>
         </el-form-item>
 
         <el-form-item  label="Nome">
-          <el-input v-model="additional.name" disabled></el-input>
+          <el-input v-model="model.name" disabled></el-input>
         </el-form-item>
 
         <el-form-item  label="Função">
-          <el-input v-model="additional.function"></el-input>
+          <el-input v-model="model.function"></el-input>
         </el-form-item>
       </div>
 
@@ -687,7 +687,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Mixins, Vue} from "vue-property-decorator";
 import {PatientModel} from "@/models/PatientModel";
 import {states} from "@/helpers/form/states";
 import {
@@ -721,16 +721,17 @@ import {
   _67
 } from "@/helpers/notifications/autoPersonalHelper";
 import {UserModel} from "@/models/UserModel";
-import { httpPost } from "@/services/http";
+import { httpPost, httpPut } from "@/services/http";
 import { apiRoutes } from "@/services/apiRoutes";
+import {ElLoadingComponent} from "element-ui/types/loading";
+import LoadingMixin from "@/components/mixins/loadingMixin";
 
 @Component({
   name: 'AutoPersonal'
 })
-export default class AutoPersonal extends Vue {
+export default class AutoPersonal extends Mixins<LoadingMixin>(LoadingMixin) {
   patient: PatientModel = new PatientModel()
-  model = {}
-  additional = {}
+  model: any = {}
   now = new Date()
   user: UserModel = this.$store.state.user
   loading = false
@@ -764,20 +765,21 @@ export default class AutoPersonal extends Vue {
   value66 = _66
   value67 = _67
 
+  isEdit = false
+
 
   created() {
-    this.additional = {
-      name: this.user.name
-    }
     this.model = {
       _03: this.now.toLocaleDateString()?.split('/')?.reverse()?.join('-'),
+      _04: 'PR',
       _39: [],
       _56: [],
       _57: [],
       _58: [],
       _59: [],
       _61: [],
-      _65: []
+      _65: [],
+      name: this.user.name
     }
   }
 
@@ -797,6 +799,31 @@ export default class AutoPersonal extends Vue {
       _30: this.patient.phone_number,
       _32: 'Brasil',
     }
+
+    this.isEdit = false
+  }
+
+  setInformationToEdit(patient: PatientModel, model: any) {
+    this.patient = patient;
+    this.model = model
+    this.isEdit = true
+
+    this.setModelInEdit()
+
+    console.log(this.model)
+  }
+
+  private setModelInEdit() {
+    this.model._39 = this.model._39?.split(',')
+    this.model._56 = this.model._56?.split(',')
+    this.model._57 = this.model._57?.split(',')
+    this.model._58 = this.model._58?.split(',')
+    this.model._59 = this.model._59?.split(',')
+    this.model._61 = this.model._61?.split(',')
+    this.model._65 = this.model._65?.split(',')
+    this.model.name = this.model.user.name
+
+
   }
 
   private onlyNumbers(value: string) {
@@ -809,7 +836,8 @@ export default class AutoPersonal extends Vue {
       cancelButtonText: 'Cancelar',
       type: 'warning'
     }).then(() => {
-      this.handle();
+      if (!this.isEdit) return this.handle()
+      return this.edit()
     })
   }
 
@@ -819,11 +847,9 @@ export default class AutoPersonal extends Vue {
   }
 
   async handle() {
+    this.openFullScreenLoading()
     try {
-      await httpPost(apiRoutes.notificationAutoPersonal, {
-        ...this.model,
-        ...this.additional
-      })
+      await httpPost(apiRoutes.notificationAutoPersonal, this.model)
       this.$notify.success({
         title: 'Successo',
         message: 'Notificação cadastrada com sucesso'
@@ -834,6 +860,24 @@ export default class AutoPersonal extends Vue {
         title: 'Erro',
         message: 'Não foi possível salvar as informações'
       })
+    } finally {
+      this.loadingFull.close()
+    }
+  }
+
+  async edit() {
+    this.openFullScreenLoading()
+    try {
+      await httpPut(`${apiRoutes.notificationAutoPersonal}/${this.model.id}`, this.model)
+      this.$notify.success({
+        title: 'Sucesso!',
+        message: 'Notificação editada com sucesso!'
+      })
+      this.close()
+    } catch (err: any) {
+      console.log(err)
+    } finally {
+      this.loadingFull.close()
     }
   }
 
@@ -868,5 +912,11 @@ export default class AutoPersonal extends Vue {
   width: 400px
   max-height: 350px
   overflow-y: auto
+
+
+@media only screen and (max-width: 450px)
+  .form-flex
+    justify-content: center
+    align-items: center
 
 </style>

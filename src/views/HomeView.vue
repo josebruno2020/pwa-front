@@ -29,7 +29,7 @@ import PageTitle from "@/components/shared/PageTitle.vue";
 
 })
 export default class HomeView extends Vue {
-  loggedName = this.$store.state.user.name;
+  loggedName = this.$store.state.user?.name;
 
 
 }

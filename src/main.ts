@@ -8,6 +8,7 @@ import '@/assets/sass/global.sass';
 import 'material-icons/iconfont/material-icons.css';
 import * as element from 'element-ui';
 import'element-ui/lib/theme-chalk/index.css';
+import locale from 'element-ui/lib/locale/lang/pt-br'
 import VueTheMask from 'vue-the-mask'
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
@@ -45,7 +46,7 @@ Vue.use(IconsPlugin)
 Vue.use(VueTheMask)
 
 
-Vue.use(element)
+Vue.use(element, {locale})
 
 Vue.config.productionTip = false
 new Vue({

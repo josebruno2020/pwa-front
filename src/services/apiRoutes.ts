@@ -5,6 +5,7 @@ export const apiRoutes = {
   resetPassword: '/auth/reset-password',
   users: '/users',
   patients: '/patients',
+  patientsSearch: '/patients/search',
   sickness: '/sickness',
   nurseReport: '/reports/nurse',
   doctorReport: '/reports/doctor',
@@ -14,5 +15,7 @@ export const apiRoutes = {
   chatUsers: '/chat/users',
   chart: '/charts',
   notificationAutoPersonal: '/notifications/auto-personal',
+  notificationAutoPersonalShow: '/notifications/auto-personal/show',
   notificationIntoxication: '/notifications/intoxication',
+  notificationIntoxicationShow: '/notifications/intoxication/show',
 };

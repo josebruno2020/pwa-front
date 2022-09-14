@@ -1,6 +1,6 @@
 <template>
   <main>
-    <page-title title="Listagem Pacientes" />
+    <page-title title="Listagem Pacientes"/>
     <el-row :gutter="20" class="row-main">
       <el-col :span="22">
         <div class="row-action">
@@ -8,6 +8,11 @@
             <el-button line-origin="left" plain type="success">Cadastrar novo paciente</el-button>
           </router-link>
         </div>
+        <el-row class="row-search">
+          <el-input placeholder="Buscar cliente...." v-model="patientSearch">
+            <el-button slot="append" icon="el-icon-search" @click="fetchPatients"></el-button>
+          </el-input>
+        </el-row>
         <el-card shadow="hover">
           <el-table
               v-loading="loading"
@@ -23,13 +28,17 @@
                 label="Nome da Mãe">
             </el-table-column>
             <el-table-column
-                align="right">
-              <template slot="header">
-                <el-input
-                    v-model="patientSearch"
-                    placeholder="Buscar..."
-                    size="mini" />
+                prop="status"
+                label="Status">
+              <template slot-scope="scope">
+                <span v-if="scope.row.status === 1">EM OBSERVAÇÃO</span>
+                <span v-if="scope.row.status === 4">ALTA</span>
               </template>
+            </el-table-column>
+            <el-table-column
+                align="right"
+                label="Informações">
+
               <template slot-scope="scope">
                 <el-button @click="showPatient(scope.row)" type="warning" circle>
                   <el-tooltip class="item" effect="dark" content="Ver informações e ações do cliente"
@@ -102,7 +111,8 @@
         </li>
 
         <li>
-          <span class="link blue" @click="openChangeStatusModal(patient)">Mudar Status do Paciente <i class="el-icon-edit"></i></span>
+          <span class="link blue" @click="openChangeStatusModal(patient)">Mudar Status do Paciente <i
+              class="el-icon-edit"></i></span>
         </li>
 
 
@@ -119,24 +129,118 @@
 
       <h1 class="patient-title">Notificações</h1>
 
+      <p class="subtitle">Violência Interpessoal/Autoprovocada</p>
       <ul class="li-link">
-        <li  @click="openAutoPersonal(patient)">
-          <span class="link blue">Cadastro Violência Interpessoal/Autoprovocada</span>
+        <li>
+          <span @click="openAutoPersonal(patient)" class="link blue">Cadastro</span>
         </li>
 
-        <li @click="printAutoPersonal(patient)">
-          <span  class="link blue">Impressão Violência Interpessoal/Autoprovocada</span>
-        </li>
+        <el-table
+            v-loading="autoPersonalLoading"
+            :data="autoPersonalNotifications"
+            style="width: 100%"
+            empty-text="Nenhum registro">
+          <el-table-column
+              prop="id"
+              label="#">
+          </el-table-column>
+          <el-table-column
+              prop="created_at"
+              label="Data de Criação">
 
+            <template slot-scope="scope">
+              {{new Date(scope.row.created_at).toLocaleString()}}
+            </template>
+          </el-table-column>
 
-        <li  @click="openIntoxication(patient)">
-          <span class="link blue">Cadastro Intoxicação Exógena</span>
-        </li>
+          <el-table-column
+              align="right"
+              label="Ações">
 
-        <li @click="printIntoxication(patient)">
-          <span  class="link blue">Impressão Intoxicação Exógena</span>
-        </li>
+            <template slot-scope="scope">
+              <el-button @click="printAutoPersonal(scope.row.id)" type="success" circle>
+                <el-tooltip class="item" effect="dark" content="Gerar PDF Notificação"
+                            placement="top-start">
+                  <i class="el-icon-printer"></i>
+                </el-tooltip>
+              </el-button>
+
+              <el-button @click="openAutoPersonalEdit(scope.row.id)" type="warning" circle>
+                <el-tooltip class="item" effect="dark" content="Editar Notificação"
+                            placement="top-start">
+                  <i class="el-icon-edit"></i>
+                </el-tooltip>
+              </el-button>
+
+              <el-button @click="confirmDeleteAutoPersonal(scope.row.id)" type="danger" circle>
+                <el-tooltip class="item" effect="dark" content="Excluir Notificação"
+                            placement="top-start">
+                  <i class="el-icon-delete"></i>
+                </el-tooltip>
+              </el-button>
+
+            </template>
+          </el-table-column>
+        </el-table>
+
       </ul>
+
+      <p class="subtitle">Intoxicação Exógena</p>
+      <ul class="li-link">
+        <li>
+          <span @click="openIntoxication(patient)" class="link blue">Cadastro</span>
+        </li>
+
+        <el-table
+            v-loading="intoxicationLoading"
+            :data="intoxicationNotifications"
+            style="width: 100%"
+            empty-text="Nenhum registro">
+          <el-table-column
+              prop="id"
+              label="#">
+          </el-table-column>
+          <el-table-column
+              prop="created_at"
+              label="Data de Criação">
+
+            <template slot-scope="scope">
+              {{new Date(scope.row.created_at).toLocaleString()}}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+              align="right"
+              label="Ações">
+
+            <template slot-scope="scope">
+              <el-button @click="printIntoxication(scope.row.id)" type="success" circle>
+                <el-tooltip class="item" effect="dark" content="Gerar PDF Notificação"
+                            placement="top-start">
+                  <i class="el-icon-printer"></i>
+                </el-tooltip>
+              </el-button>
+
+              <el-button @click="openIntoxicationEdit(scope.row.id)" type="warning" circle>
+                <el-tooltip class="item" effect="dark" content="Editar Notificação"
+                            placement="top-start">
+                  <i class="el-icon-edit"></i>
+                </el-tooltip>
+              </el-button>
+
+              <el-button @click="confirmDeleteAutoPersonal(scope.row.id, false)" type="danger" circle>
+                <el-tooltip class="item" effect="dark" content="Excluir Notificação"
+                            placement="top-start">
+                  <i class="el-icon-delete"></i>
+                </el-tooltip>
+              </el-button>
+
+            </template>
+          </el-table-column>
+        </el-table>
+      </ul>
+
+
     </el-dialog>
 
     <el-dialog
@@ -205,14 +309,14 @@
         title="Violência Interpessoal/Autoprovocada"
         :visible.sync="showNotificationAutoPersonal"
         :fullscreen="true">
-      <auto-personal ref="autoPersonal" @close="showNotificationAutoPersonal = false"/>
+      <auto-personal ref="autoPersonal" @close="showNotificationAutoPersonal = false; fetchAutoPersonalByPatient(patient)"/>
     </el-dialog>
 
     <el-dialog
         title="Intoxicação Exógena"
         :visible.sync="showNotificationIntoxication"
         :fullscreen="true">
-      <intoxication ref="intoxication" @close="showNotificationIntoxication = false"/>
+      <intoxication ref="intoxication" @close="showNotificationIntoxication = false; fetchIntoxicationByPatient(patient)"/>
     </el-dialog>
   </main>
 </template>
@@ -240,6 +344,7 @@ import PatientChart from "@/components/patient/PatientChart.vue";
 import AutoPersonal from "@/components/notifications/AutoPersonal.vue";
 import Intoxication from "@/components/notifications/Intoxication.vue";
 import axios from "axios";
+import {americanToBrazilianFormat} from "@/helpers/date/date-helper";
 
 @Component({
   components: {
@@ -286,14 +391,21 @@ export default class ListPatient extends Vue {
 
   loadingFull: ElLoadingComponent
 
+  autoPersonalNotifications: any[] = []
+  autoPersonalLoading = false
+
+  intoxicationNotifications: any[] = []
+  intoxicationLoading = false
+
   created() {
     this.fetchPatients();
   }
 
   private async fetchPatients() {
+    console.log(this.patientSearch)
     this.loading = true
     try {
-      const {data: {content}} = await httpGet(apiRoutes.patients, { page: this.page });
+      const {data: {content}} = await httpGet(apiRoutes.patients, {page: this.page, search: this.patientSearch});
       this.patients = content.data;
       this.content = content
     } catch (e: any) {
@@ -318,6 +430,11 @@ export default class ListPatient extends Vue {
     this.$nextTick(() => {
       return this.$refs['showPatientModal'].setInformation(patient)
     })
+
+    this.patient = patient
+
+    this.fetchAutoPersonalByPatient(patient)
+    this.fetchIntoxicationByPatient(patient)
   }
 
   async openNurseReport(patient: PatientModel) {
@@ -403,6 +520,73 @@ export default class ListPatient extends Vue {
     this.$nextTick(() => {
       return this.$refs['autoPersonal'].setInformation(patient)
     })
+
+  }
+
+  async fetchAutoPersonalByPatient(patient: PatientModel) {
+    this.autoPersonalLoading = true
+    try {
+      const {data: {content}} = await httpGet(`${apiRoutes.notificationAutoPersonal}/${patient.id}`)
+      this.autoPersonalNotifications = content
+
+    } catch (err: any) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível buscar as notificações do paciente'
+      })
+    } finally {
+      this.autoPersonalLoading = false
+    }
+  }
+
+  async openAutoPersonalEdit(id: number) {
+    this.openFullScreenLoading()
+    try {
+      const {data: {content}} = await httpGet(`${apiRoutes.notificationAutoPersonalShow}/${id}`)
+
+      this.showNotificationAutoPersonal = true
+      this.$nextTick(() => {
+        return this.$refs['autoPersonal'].setInformationToEdit(this.patient, content)
+      })
+    } catch (err) {
+     this.$notify.error({
+       title: 'Erro',
+       message: 'Notificação não encontrada'
+     })
+    } finally {
+      this.loadingFull.close()
+    }
+  }
+
+  confirmDeleteAutoPersonal(id: number, isPersonal = true) {
+    this.$confirm('Tem certeza que deseja excluir a notificação selecionada?', 'Excluir', {
+      confirmButtonText: 'Excluir',
+      cancelButtonText: 'Cancelar',
+      type: 'warning'
+    }).then(() => {
+      if (isPersonal) return this.deleteAutoPersonal(id)
+      return this.deleteIntoxication(id)
+    })
+  }
+
+  async deleteAutoPersonal(id: number) {
+    this.openFullScreenLoading()
+    try {
+      await httpDelete(`${apiRoutes.notificationAutoPersonal}/${id}`);
+      this.$notify.success({
+        title: 'Sucesso!',
+        message: 'Notifcação excluída com sucesso'
+      })
+      await this.fetchAutoPersonalByPatient(this.patient)
+    } catch (err: any) {
+      console.log(err)
+      this.$notify.error({
+        title:'Erro',
+        message: 'Não foi possível deletar a notificação.'
+      })
+    } finally {
+      this.loadingFull.close()
+    }
   }
 
   async openIntoxication(patient: PatientModel) {
@@ -412,16 +596,67 @@ export default class ListPatient extends Vue {
     })
   }
 
-  async printAutoPersonal(patient: PatientModel) {
+  async fetchIntoxicationByPatient(patient: PatientModel) {
+    this.intoxicationLoading = true
+    try {
+      const {data: {content}} = await httpGet(`${apiRoutes.notificationIntoxication}/${patient.id}`)
+      this.intoxicationNotifications = content
+
+    } catch (err: any) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi possível buscar as notificações do paciente'
+      })
+    } finally {
+      this.intoxicationLoading = false
+    }
+  }
+
+  async openIntoxicationEdit(id: number) {
     this.openFullScreenLoading()
     try {
-      const { data: {content} } = await httpGet(`${apiRoutes.notificationAutoPersonal}/${patient.id}`);
-      if (!content.length) {
-        return this.$notify.info({
-          title: 'Não encontrado',
-          message: 'O paciente não possui a notificação para impressão.'
-        })
-      }
+      const {data: {content}} = await httpGet(`${apiRoutes.notificationIntoxicationShow}/${id}`)
+
+      this.showNotificationIntoxication = true
+      this.$nextTick(() => {
+        return this.$refs['intoxication'].setInformationToEdit(this.patient, content)
+      })
+    } catch (err) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Notificação não encontrada'
+      })
+    } finally {
+      this.loadingFull.close()
+    }
+  }
+
+  async deleteIntoxication(id: number) {
+    this.openFullScreenLoading()
+    try {
+      await httpDelete(`${apiRoutes.notificationIntoxication}/${id}`);
+      this.$notify.success({
+        title: 'Sucesso!',
+        message: 'Notifcação excluída com sucesso'
+      })
+      await this.fetchIntoxicationByPatient(this.patient)
+    } catch (err: any) {
+      console.log(err)
+      this.$notify.error({
+        title:'Erro',
+        message: 'Não foi possível deletar a notificação.'
+      })
+    } finally {
+      this.loadingFull.close()
+    }
+  }
+
+  async printAutoPersonal(id: number) {
+    this.openFullScreenLoading()
+    try {
+      const {data: {content}} = await httpGet(`${apiRoutes.notificationAutoPersonalShow}/${id}`);
+
+
       const {data} = await axios.post(`${process.env.VUE_APP_API_NODE_URL}/reports/auto-personal`, content, {
         responseType: 'arraybuffer',
         headers: {
@@ -429,7 +664,7 @@ export default class ListPatient extends Vue {
           'Accept': 'application/pdf'
         }
       })
-      const fileName = `${patient.name.split(' ')[0]}-${new Date().getTime()}.pdf`
+      const fileName = `${this.patient.name.split(' ')[0]}-${new Date().getTime()}.pdf`
       this.downloadFile(data, fileName)
 
     } catch (err: any) {
@@ -443,16 +678,11 @@ export default class ListPatient extends Vue {
   }
 
 
-  async printIntoxication(patient: PatientModel) {
+  async printIntoxication(id: number) {
     this.openFullScreenLoading()
     try {
-      const { data: {content} } = await httpGet(`${apiRoutes.notificationIntoxication}/${patient.id}`);
-      if (!content.length) {
-        return this.$notify.info({
-          title: 'Não encontrado',
-          message: 'O paciente não possui a notificação para impressão.'
-        })
-      }
+      const {data: {content}} = await httpGet(`${apiRoutes.notificationIntoxicationShow}/${id}`);
+
       const {data} = await axios.post(`${process.env.VUE_APP_API_NODE_URL}/reports/intoxication`, content, {
         responseType: 'arraybuffer',
         headers: {
@@ -460,7 +690,7 @@ export default class ListPatient extends Vue {
           'Accept': 'application/pdf'
         }
       })
-      const fileName = `${patient.name.split(' ')[0]}-${new Date().getTime()}.pdf`
+      const fileName = `${this.patient.name.split(' ')[0]}-${new Date().getTime()}.pdf`
       this.downloadFile(data, fileName)
 
     } catch (err: any) {
@@ -539,6 +769,10 @@ h1 {
   justify-content: center;
 }
 
+.row-search {
+  margin-top: 1rem;
+}
+
 .patient-title {
   margin-top: 3rem;
 }
@@ -565,5 +799,10 @@ h1 {
 
 .blue {
   color: #3737fa;
+}
+
+.subtitle {
+  font-weight: bold;
+  margin: 1rem 0;
 }
 </style>

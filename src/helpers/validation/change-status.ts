@@ -1,7 +1,11 @@
 import {requiredMessage} from "@/helpers/validation/validation-helper";
 
 export const changeStatusRules = {
-    status_to: [
+    destiny: [
         { required: true, message: requiredMessage('destino'), trigger: 'submit' },
+    ],
+
+    is_alta: [
+        { required: true, message: requiredMessage('recebeu alta'), trigger: 'submit' },
     ],
 }

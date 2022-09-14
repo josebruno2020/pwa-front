@@ -29,7 +29,7 @@
 
 
         <el-form-item label="Código IBGE">
-          <el-input v-model="model._0505" maxlength="6" @input="onlyNumbers($event)"></el-input>
+          <el-input v-model="model._0505" maxlength="6"></el-input>
         </el-form-item>
 
 
@@ -600,26 +600,26 @@
 
       <div class="form-flex">
         <el-form-item  label="Observações Adicionais:">
-          <el-input v-model="additional.obs" type="textarea" :rows="3"></el-input>
+          <el-input v-model="model.obs" type="textarea" :rows="3"  maxlength="150" show-word-limit></el-input>
         </el-form-item>
       </div>
 
       <p class="subtitle">Notificador</p>
       <div class="form-flex">
         <el-form-item  label="Município/Unidade de Saúde">
-          <el-input v-model="additional.city"></el-input>
+          <el-input v-model="model.city"></el-input>
         </el-form-item>
 
         <el-form-item  label="Cód. da Unid. de Saúde/CNES">
-          <el-input v-model="additional.code" maxlength="8"></el-input>
+          <el-input v-model="model.code" maxlength="8"></el-input>
         </el-form-item>
 
         <el-form-item  label="Nome">
-          <el-input v-model="additional.name" disabled></el-input>
+          <el-input v-model="model.name" disabled></el-input>
         </el-form-item>
 
         <el-form-item  label="Função">
-          <el-input v-model="additional.function"></el-input>
+          <el-input v-model="model.function"></el-input>
         </el-form-item>
       </div>
 
@@ -634,20 +634,22 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Mixins, Vue} from "vue-property-decorator";
 import {PatientModel} from "@/models/PatientModel";
 import {states} from "@/helpers/form/states";
 import { _10, _11, _12, _13, _14, _29, _33, _34, _47, _49, _51, _52, _54, _55, _56, _57, _58, _59, _60, _65, _67, _68, _70 } from "@/helpers/notifications/intoxicationHelper";
-import {httpPost} from "@/services/http";
+import {httpPost, httpPut} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
+import {UserModel} from "@/models/UserModel";
+import LoadingMixin from "@/components/mixins/loadingMixin";
 
 @Component({
   name: 'Intoxication'
 })
-export default class Intoxication extends Vue {
+export default class Intoxication extends Mixins<LoadingMixin>(LoadingMixin) {
   model: any = {}
-  additional: any = {}
   patient: PatientModel = new PatientModel()
+  user: UserModel = this.$store.state.user
   now = new Date()
   states = states
 
@@ -676,11 +678,14 @@ export default class Intoxication extends Vue {
   value68 = _68
   value70 = _70
 
+  isEdit = false
+
 
 
   created() {
     this.model = {
-      ...this.model,
+      _03: this.now.toLocaleDateString()?.split('/')?.reverse()?.join('-'),
+      _04: 'PR',
       _12: [],
       _30: 'Brasil',
       _48: 'Brasil',
@@ -689,14 +694,13 @@ export default class Intoxication extends Vue {
       _52: [{ value: '' }],
       _54: [{ value: '' }],
     }
-
-    console.log(this.model)
   }
 
   setInformation(patient:PatientModel) {
     this.patient = patient
     this.model = {
       ...this.model,
+      patient_id: this.patient.id,
       _08: this.patient.name,
       _09: this.patient.birthdate,
       _16: this.patient.name_mother,
@@ -705,13 +709,34 @@ export default class Intoxication extends Vue {
       _20: this.patient.neighborhood,
       _21: this.patient.street,
       _22: this.patient.number,
-      _28: this.patient.phone_number
+      _28: this.patient.phone_number,
+      name: this.user.name
     }
+
+    this.isEdit = false
+  }
+
+  setInformationToEdit(patient: PatientModel, model: any) {
+    this.patient = patient
+    this.model = model
+    this.isEdit = true
+
+    this.setInformationInEdit()
+
+    console.log(this.model)
+  }
+
+  private setInformationInEdit() {
+    this.model._50 = this.model._50?.split(',').map(v => ({value: v}))
+    this.model._5005 = this.model._5005?.split(',').map(v => ({value: v}))
+    this.model._52 = this.model._52?.split(',').map(v => ({value: v}))
+    this.model._54 = this.model._54?.split(',').map(v => ({value: v}))
+
+    this.model.name = this.user.name
   }
 
 
   add(model) {
-    console.log(model)
     if (model.length === 3) return
     return model.push({value: ''})
   }
@@ -724,23 +749,16 @@ export default class Intoxication extends Vue {
       type: 'warning'
     }).then(() => {
       this.formatModel();
-      this.handle();
+
+      if (!this.isEdit) return this.handle()
+      return this.edit()
     })
-
-
-    console.log(Object.entries(this.model))
   }
 
   async handle() {
+    this.openFullScreenLoading()
     try {
-      console.log({
-        ...this.model,
-        ...this.additional
-      })
-      // await httpPost(apiRoutes.notificationIntoxication, {
-      //   ...this.model,
-      //   ...this.additional
-      // })
+      await httpPost(apiRoutes.notificationIntoxication, this.model)
       this.$notify.success({
         title: 'Successo',
         message: 'Notificação cadastrada com sucesso'
@@ -751,7 +769,29 @@ export default class Intoxication extends Vue {
         title: 'Erro',
         message: 'Não foi possível salvar as informações'
       })
+    } finally {
+      this.loadingFull.close()
     }
+  }
+
+  async edit() {
+    this.openFullScreenLoading()
+    try {
+      await httpPut(`${apiRoutes.notificationIntoxication}/${this.model.id}`, this.model);
+      this.$notify.success({
+        title: 'Sucesso!',
+        message: 'Notificação editada com sucesso!'
+      })
+      this.close()
+    } catch (err: any) {
+      this.$notify.error({
+        title: 'Erro',
+        message: 'Não foi editar as informações'
+      })
+    } finally {
+      this.loadingFull.close()
+    }
+    console.log('TODO')
   }
 
 
@@ -795,4 +835,9 @@ export default class Intoxication extends Vue {
 
 .input-array
   margin-bottom: .5rem
+
+@media only screen and (max-width: 450px)
+  .form-flex
+    justify-content: center
+    align-items: center
 </style>

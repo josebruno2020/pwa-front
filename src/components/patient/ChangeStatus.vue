@@ -2,16 +2,15 @@
   <main>
     <el-form @submit.native.prevent="submitForm" ref="status-form" :model="model" label-width="120px"
              :rules="rules" label-position="top">
-      <el-form-item label="Destino" prop="status_to">
-        <el-radio v-model="model.status_to" :label="patientStatusEnum.INTUBATED">
-          ENTUBADO E MANTIDO EM VENTILAÇÃO MECÂNICA
-        </el-radio>
-        <el-radio v-model="model.status_to" :label="patientStatusEnum.HOSPITAL">
-          ENCAMINHADA AO HOSPITAL VIA SAMU
-        </el-radio>
-        <el-radio v-model="model.status_to" :label="patientStatusEnum.HOME">
-          ALTA MÉDICA PARA DOMICÍLIO
-        </el-radio>
+      <el-form-item label="Destino" prop="destiny">
+        <el-input v-model="model.destiny"></el-input>
+      </el-form-item>
+
+      <el-form-item label="Recebeu Alta?" prop="is_alta">
+        <el-select v-model="model.is_alta">
+          <el-option :value="1" label="SIM"></el-option>
+          <el-option :value="0" label="NÃO"></el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item label="Acompanhante" prop="companion">
@@ -96,6 +95,8 @@ export default class ChangeStatus extends Vue {
         title: 'Erro',
         message: 'Não foi possível mudar o status do paciente.'
       })
+    } finally {
+      this.loading = false;
     }
   }
 }

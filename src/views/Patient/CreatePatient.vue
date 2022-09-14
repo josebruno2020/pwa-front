@@ -19,13 +19,12 @@
             </h5>
           </div>
           <p>Verifique se o paciente já existe nos registros antes de continuar.</p>
-          <el-form @submit.native.prevent="searchPatient" :inline="true" ref="patient-form" label-width="120px">
+          <el-form @submit.native.prevent="searchPatient" :inline="true" ref="patient-form" label-position="top" label-width="120px">
 
             <el-form-item label="Campo de busca">
-              <el-input v-model="search" placeholder="Buscar pelo nome ou nome da mãe..."></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="success" plain :loading="loading" native-type="submit">Procurar</el-button>
+              <el-input v-model="search" placeholder="Buscar pelo nome ou nome da mãe...">
+                <el-button slot="append" icon="el-icon-search" native-type="submit"></el-button>
+              </el-input>
             </el-form-item>
           </el-form>
 
@@ -62,7 +61,7 @@
           </el-table>
 
           <div class="footer">
-            <el-button type="success" @click="confirmContinue()" :loading="loading" native-type="button">Continuar
+            <el-button type="success" @click="confirmContinue()" :loading="loading" native-type="button">Continuar sem paciente
             </el-button>
           </div>
         </el-card>
@@ -226,7 +225,7 @@ export default class CreatePatient extends Vue {
   async searchPatient() {
     this.loading = true
     try {
-      const {data} = await httpGet(apiRoutes.patients, {search: this.search});
+      const {data} = await httpGet(apiRoutes.patientsSearch, {search: this.search});
       console.log(data)
       this.patientsSearched = data.content
     } catch (err: any) {

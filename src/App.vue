@@ -134,12 +134,13 @@ export default {
   },
 
   updated() {
-    if (this.$store.state.token) {
+    if (this.$store.state?.token) {
       // this.getUsers();
       return this.logged = true;
 
     }
-    return this.logged = false;
+    this.logged = false;
+    return this.$router.push({name: 'login'})
   },
 
   methods: {
