@@ -97,8 +97,6 @@ export default {
       this.getUsers();
       return this.logged = true;
     }
-
-    return this.$router.push({name: 'login'});
   },
 
   mounted() {
