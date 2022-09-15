@@ -1,6 +1,6 @@
 <template>
   <main>
-    <page-title title="Página inicial - Monintox"/>
+    <page-title title="Página inicial"/>
     <section class="home">
 
       <img alt="Vue logo" src="../assets/logo.png" class="logo">

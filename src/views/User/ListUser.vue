@@ -31,9 +31,9 @@
                 <el-button type="warning" circle @click="editUser(scope.row)">
                   <i class="el-icon-edit"></i>
                 </el-button>
-                <el-button type="danger" circle @click="confirmDeleteUser(scope.row.id)">
+                <!-- <el-button type="danger" circle @click="confirmDeleteUser(scope.row.id)">
                   <i class="el-icon-delete"></i>  
-                </el-button>
+                </el-button> -->
               </template>
             </el-table-column>
           </el-table>

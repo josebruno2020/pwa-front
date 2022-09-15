@@ -723,7 +723,6 @@ import {
 import {UserModel} from "@/models/UserModel";
 import { httpPost, httpPut } from "@/services/http";
 import { apiRoutes } from "@/services/apiRoutes";
-import {ElLoadingComponent} from "element-ui/types/loading";
 import LoadingMixin from "@/components/mixins/loadingMixin";
 
 @Component({
@@ -842,7 +841,7 @@ export default class AutoPersonal extends Mixins<LoadingMixin>(LoadingMixin) {
   }
 
 
-  private setInformationInArray(model: any, value: number, valueInArray: number): void {
+  private setInformationInArray(model: any, value: number|string, valueInArray: number): void {
     Vue.set(model, valueInArray, value)
   }
 
@@ -918,5 +917,8 @@ export default class AutoPersonal extends Mixins<LoadingMixin>(LoadingMixin) {
   .form-flex
     justify-content: center
     align-items: center
+
+  .el-textarea
+    width: 250px
 
 </style>

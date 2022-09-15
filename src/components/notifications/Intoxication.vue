@@ -3,7 +3,7 @@
     <h5>Formulário de Notificação de Intoxicação Exógena</h5>
 
     <el-form class="form-auto-personal" @submit.native.prevent="submitForm" ref="autopersonal-form" :model="model"
-             label-width="120px"
+             label-width="250px"
              label-position="top">
       <p class="subtitle">Dados Gerais</p>
 
@@ -634,7 +634,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Mixins, Vue} from "vue-property-decorator";
+import {Component, Mixins} from "vue-property-decorator";
 import {PatientModel} from "@/models/PatientModel";
 import {states} from "@/helpers/form/states";
 import { _10, _11, _12, _13, _14, _29, _33, _34, _47, _49, _51, _52, _54, _55, _56, _57, _58, _59, _60, _65, _67, _68, _70 } from "@/helpers/notifications/intoxicationHelper";
@@ -840,4 +840,7 @@ export default class Intoxication extends Mixins<LoadingMixin>(LoadingMixin) {
   .form-flex
     justify-content: center
     align-items: center
+
+  .el-textarea
+    width: 250px
 </style>
