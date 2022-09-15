@@ -12,7 +12,7 @@
           plain>
         <span v-if="messagesWithoutRead.length" class="text-primary">{{  messagesWithoutRead.length  }}</span>
       </el-button>
-    <el-dialog title="Sala de chat"
+    <el-dialog v-if="logged" title="Sala de chat"
                :visible.sync="isShowChat"
                width="90%"
     @close="userTo = {id: null}; isShowChat = false">
@@ -75,11 +75,16 @@ export default {
 
   computed: {
     chatMessages() {
-      return this.messages.filter(message => {
-        let chatIdArray = message.chatId.split('-')
-        return (Number(chatIdArray[0]) === this.loggedUser.id && Number(chatIdArray[1]) === this.userTo.id) ||
-            (Number(chatIdArray[0]) === this.userTo.id && Number(chatIdArray[1]) === this.loggedUser.id)
-      })
+      if (this.loggedUser) {
+        return this.messages.filter(message => {
+          let chatIdArray = message.chatId.split('-')
+          return (Number(chatIdArray[0]) === this.loggedUser?.id && Number(chatIdArray[1]) === this.userTo?.id) ||
+              (Number(chatIdArray[0]) === this.userTo?.id && Number(chatIdArray[1]) === this.loggedUser?.id)
+          })
+      }
+
+      return []
+      
     },
 
     // totalMessagesWithoutRead() {
@@ -93,7 +98,7 @@ export default {
       return this.logged = true;
     }
 
-    // return this.$router.push('/login');
+    return this.$router.push({name: 'login'});
   },
 
   mounted() {
@@ -140,7 +145,7 @@ export default {
 
     }
     this.logged = false;
-    return this.$router.push({name: 'login'})
+    // return this.$router.push({name: 'login'})
   },
 
   methods: {

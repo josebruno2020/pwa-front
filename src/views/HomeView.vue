@@ -4,7 +4,7 @@
     <section class="home">
 
       <img alt="Vue logo" src="../assets/logo.png" class="logo">
-      <p class="text-center">Seja bem-vindo(a), {{ loggedName }}</p>
+      <p v-if="loggedName" class="text-center">Seja bem-vindo(a), {{ loggedName }}</p>
 
       <div class="button">
         <router-link :to="{name: 'createPatient'}">
@@ -29,7 +29,7 @@ import PageTitle from "@/components/shared/PageTitle.vue";
 
 })
 export default class HomeView extends Vue {
-  loggedName = this.$store.state.user?.name;
+  loggedName = this.$store.state.user?.name ?? null;
 
 
 }
