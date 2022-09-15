@@ -9,7 +9,7 @@
           </router-link>
         </div>
         <el-row class="row-search">
-          <el-input placeholder="Buscar cliente...." v-model="patientSearch">
+          <el-input placeholder="Buscar cliente...." v-model="patientSearch" @keydown.native.enter="fetchPatients">
             <el-button slot="append" icon="el-icon-search" @click="fetchPatients"></el-button>
           </el-input>
         </el-row>
@@ -117,7 +117,7 @@
 
 
         <li>
-          <span class="link blue">Editar Paciente (a fazer) <i class="el-icon-edit"></i></span>
+          <span class="link blue" @click="openPatientEditModal(patient)">Editar Paciente<i class="el-icon-edit"></i></span>
         </li>
 
         <li>
@@ -304,6 +304,13 @@
       <change-status ref="changeStatusModal" @submit="endChangeStatus()"/>
     </el-dialog>
 
+    <el-dialog
+        title="Editar Paciente"
+        :visible.sync="showPatientEdit"
+        width="90%">
+      <edit-patient ref="patientEdit" @submit="closePatientEdit($event)"/>
+    </el-dialog>
+
 
     <el-dialog
         title="Violência Interpessoal/Autoprovocada"
@@ -343,8 +350,9 @@ import ChangeStatus from "@/components/patient/ChangeStatus.vue";
 import PatientChart from "@/components/patient/PatientChart.vue";
 import AutoPersonal from "@/components/notifications/AutoPersonal.vue";
 import Intoxication from "@/components/notifications/Intoxication.vue";
+import EditPatient from "@/components/patient/EditPatient.vue";
 import axios from "axios";
-import {americanToBrazilianFormat} from "@/helpers/date/date-helper";
+
 
 @Component({
   components: {
@@ -360,7 +368,8 @@ import {americanToBrazilianFormat} from "@/helpers/date/date-helper";
     ChangeStatus,
     PatientChart,
     AutoPersonal,
-    Intoxication
+    Intoxication,
+    EditPatient
   }
 })
 export default class ListPatient extends Vue {
@@ -370,7 +379,6 @@ export default class ListPatient extends Vue {
   patients: PatientModel[] = []
   content: any = null
   page = 1
-  // size = 10
 
   public patientSearch = ''
   loading = true
@@ -385,6 +393,7 @@ export default class ListPatient extends Vue {
   showVitalSignsHistoryModal = false
   showChangeStatusModal = false
   showPatientChart = false
+  showPatientEdit = false
 
   showNotificationAutoPersonal = false
   showNotificationIntoxication = false
@@ -491,6 +500,23 @@ export default class ListPatient extends Vue {
     this.showChangeStatusModal = true
     this.$nextTick(() => {
       return this.$refs['changeStatusModal'].setInformation(patient)
+    })
+  }
+
+  async openPatientEditModal(patient: PatientModel) {
+    this.showPatientEdit = true
+    let patientCopy = new PatientModel()
+    Object.assign(patientCopy, patient)
+    this.$nextTick(() => {
+      return this.$refs['patientEdit'].setInformation(patientCopy)
+    })
+  }
+
+  closePatientEdit(newPatient: PatientModel) {
+    this.patient = newPatient
+    this.showPatientEdit = false
+    this.$nextTick(() => {
+      return this.$refs['showPatientModal'].setInformation(newPatient)
     })
   }
 
