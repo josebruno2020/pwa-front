@@ -1,7 +1,7 @@
 <template>
   <main>
     <img alt="Vue logo" src="../../assets/logo.png" class="logo">
-    <p class="text-center">Informe seu e-mail para continuar. Após a verificação do e-mail você poderá resetar sua senha.</p>
+    <p class="text-center">Informe seu e-mail para continuar. Após a verificação do e-mail você poderá redefinir sua senha.</p>
     <div class="login-form">
       <el-form class="form" ref="password-form" :model="model" :rules="rules" label-width="120px" label-position="top"
                @submit.native.prevent="validateForm">
@@ -55,7 +55,7 @@ export default class Password extends Vue {
 
       this.$notify.success({
         title: 'Sucesso',
-        message: 'Enviamos o e-mail com link para resetar a sua senha. Confira sua caixa de entrada.'
+        message: 'Enviamos o e-mail com link para redefinir a sua senha. Confira sua caixa de entrada.'
       })
 
     } catch (err: any) {

@@ -1,0 +1,15 @@
+@media print {
+    @page { margin: 0 auto; }
+    body { margin: 1.6cm; }
+    div { break-inside: avoid;  }
+    .pagebreak { page-break-before: always; }
+    .report-title {
+        margin-bottom: 2rem;
+    }
+    .report-body {
+        font-size: 1.1rem;
+    }
+    .no-print {
+        display: none;
+    }
+}

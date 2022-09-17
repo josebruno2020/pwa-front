@@ -10,7 +10,7 @@
             <span>Enfermeiro(a): <strong>{{ report.user.name }}</strong></span>
             <span style="float: right; padding: 3px 0" type="text"><strong>{{formatDate(report.created_at)}}</strong>
             </span>
-            <span class="report-action"  v-if="report.user.id === userId">
+            <span class="report-action no-print"  v-if="report.user.id === userId">
               <el-button size="mini" type="warning" plain @click="editRow(index)">
                 <i class="el-icon-edit"></i>
               </el-button>
@@ -21,7 +21,7 @@
           </div>
           <div class="report-body">
             <p :id="`report-${index}`">{{ report.report }}</p>
-            <div :id="`edit-report-${index}`" class="d-none">
+            <div :id="`edit-report-${index}`" class="d-none no-print">
               <el-input type="textarea" v-model="report.report"></el-input>
               <el-button
                   class="btn-edit"
@@ -41,7 +41,7 @@
     </div>
 
     <div class="report-print">
-      <el-button type="warning" plain @click="printReport('print-nurse')">
+      <el-button type="warning" plain @click="printReport">
         <i class="el-icon-printer"></i>
       </el-button>
     </div>
@@ -57,17 +57,17 @@ import {Mixins, Component} from "vue-mixin-decorator";
 import LoadingMixin from "@/components/mixins/loadingMixin";
 import DateMixin from "@/components/mixins/dateMixin";
 import EditRowMixin from "@/components/mixins/editRowMixin";
-import PrintMixin from "@/components/mixins/printMixin";
 
 
 @Component({
   name: 'HistoryNurseReport'
 })
-export default class HistoryNurseReport extends Mixins<LoadingMixin>(LoadingMixin, DateMixin, EditRowMixin, PrintMixin) {
+export default class HistoryNurseReport extends Mixins<LoadingMixin>(LoadingMixin, DateMixin, EditRowMixin) {
   loading = false
   patient: PatientModel = new PatientModel()
   reports: Array<any> = []
   userId: number
+  $htmlToPaper: any;
 
   async setInformation(patient: PatientModel) {
     this.patient = patient
@@ -130,6 +130,10 @@ export default class HistoryNurseReport extends Mixins<LoadingMixin>(LoadingMixi
     } finally {
       this.loadingFull.close()
     }
+  }
+
+  async printReport() {
+    await this.$htmlToPaper('print-nurse');
   }
 }
 </script>

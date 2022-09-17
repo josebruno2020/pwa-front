@@ -1,7 +1,7 @@
 import Vue from 'vue';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { Mixin } from 'vue-mixin-decorator';
+import {Mixin} from 'vue-mixin-decorator';
 
 @Mixin
 export default class PrintMixin extends Vue {
@@ -23,6 +23,8 @@ export default class PrintMixin extends Vue {
         <head>
           <style>
             @media print {
+              @page { margin: 0 auto; }
+              body { margin: 1.6cm; }
               div { break-inside: avoid;  }
               .pagebreak { page-break-before: always; }               
             }

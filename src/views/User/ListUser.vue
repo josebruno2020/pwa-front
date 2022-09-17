@@ -5,7 +5,7 @@
       <el-col :span="22">
         <div class="row-action">
           <router-link  :to="{name: 'createUser'}" class="router-button">
-            <el-button line-origin="left"  plain type="success">Cadastrar novo usuário</el-button>
+            <el-button :disabled="loggedUser.user_type !== 1" line-origin="left"  plain type="success">Cadastrar novo usuário</el-button>
           </router-link>
         </div>
         <el-card shadow="hover">
@@ -28,7 +28,7 @@
             </el-table-column>
             <el-table-column label="Ações">
               <template slot-scope="scope">
-                <el-button type="warning" circle @click="editUser(scope.row)">
+                <el-button :disabled="loggedUser.user_type !== 1" type="warning" circle @click="editUser(scope.row)">
                   <i class="el-icon-edit"></i>
                 </el-button>
                 <!-- <el-button type="danger" circle @click="confirmDeleteUser(scope.row.id)">
@@ -87,8 +87,10 @@ export default class ListUser extends Mixins<LoadingMixin>(LoadingMixin) {
   showEditUserModal = false;
   page = 1
   content: any = null
+  loggedUser = null
 
   async created() {
+    this.loggedUser = this.$store.state.user
     await this.fetchUsers();
   }
 

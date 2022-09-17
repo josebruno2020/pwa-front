@@ -8,7 +8,7 @@
       <div class="report" v-for="(report, index) in chart.nurseReport" :key="index">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>Doutor(a): <strong>{{ report.user.name }}</strong></span>
+            <span>Enfermeiro(a): <strong>{{ report.user.name }}</strong></span>
             <span style="float: right; padding: 3px 0" type="text"><strong>{{ formatDate(report.created_at) }}</strong>
             </span>
           </div>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="report-print">
-      <el-button type="warning" plain @click="printReport('print-chart')">
+      <el-button type="warning" plain @click="print">
         <i class="el-icon-printer"></i>
       </el-button>
     </div>
@@ -85,6 +85,7 @@ export default class PatientChart extends Mixins<DateMixin>(DateMixin, PrintMixi
     vitalSigns: []
   }
   patient: PatientModel = new PatientModel()
+  $htmlToPaper: any;
 
   async setInformation(patient: PatientModel) {
     console.log('aqui')
@@ -102,7 +103,6 @@ export default class PatientChart extends Mixins<DateMixin>(DateMixin, PrintMixi
     }
     try {
       const {data} = await httpGet(`${apiRoutes.chart}/${this.patient.id}`)
-      console.log(data)
       this.chart = data.content
     } catch (err: any) {
       this.$notify.error({
@@ -112,6 +112,10 @@ export default class PatientChart extends Mixins<DateMixin>(DateMixin, PrintMixi
     } finally {
       this.loading = false
     }
+  }
+
+  async print() {
+    await this.$htmlToPaper('print-chart')
   }
 }
 </script>

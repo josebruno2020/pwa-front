@@ -6,7 +6,7 @@
         <el-card class="card" shadow="hover">
           <div slot="header">
             <h5>
-              Agora você pode definir a sua nova senha!
+              Agora você pode redefinir a sua nova senha!
             </h5>
           </div>
 
@@ -108,11 +108,11 @@ export default class ResetPassword extends Vue {
       });
       this.$notify.success({
         title: 'Sucesso!',
-        message: 'Senha resetada com sucesso!'
+        message: 'Senha redefinida com sucesso!'
       })
       return this.$router.push({name: 'login'});
     } catch (err: any) {
-      let message = 'Não foi possivel resetar a senha. Tente novamente mais tarde!'
+      let message = 'Não foi possivel redefinir a senha. Tente novamente mais tarde!'
       if (err.response?.status === 403) {
         message = 'O Link está inválido. Solicite um novo na página: Esqueci minha Senha'
       }

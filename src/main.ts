@@ -17,6 +17,25 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import Echo from "laravel-echo";
 
+import VueHtmlToPaper from 'vue-html-to-paper';
+
+const options = {
+  name: '_blank',
+  specs: [
+    "fullscreen=yes",
+    'titlebar=yes',
+    'scrollbars=yes'
+  ],
+  styles: [
+    'https://monintox.online/css/print.css',
+    'https://unpkg.com/element-ui/lib/theme-chalk/index.css',
+
+  ],
+  timeout: 1000, // default timeout before the print window appears
+  autoClose: true, // if false, the window will not close after printing
+  windowTitle: window.document.title, // override the window title
+}
+
 
 
 declare global {
@@ -44,6 +63,8 @@ window.Echo = new Echo({
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueTheMask)
+
+Vue.use(VueHtmlToPaper, options);
 
 
 Vue.use(element, {locale})

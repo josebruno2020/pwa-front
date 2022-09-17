@@ -98,11 +98,11 @@
 
       <ul class="li-link">
         <li>
-          <span class="link blue" @click="openNurseReport(patient)">Adicionar Relatório de Enfermagem <i
+          <span class="link blue" :class="!hasPermission('nurse') ? 'disabled-action' : ''" @click="openNurseReport(patient)">Adicionar Relatório de Enfermagem <i
               class="el-icon-edit"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i
+          <span class="link blue" :class="!hasPermission('doctor') ? 'disabled-action' : ''" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i
               class="el-icon-edit"></i></span>
         </li>
         <li>
@@ -172,7 +172,7 @@
                 </el-tooltip>
               </el-button>
 
-              <el-button @click="confirmDeleteAutoPersonal(scope.row.id)" type="danger" circle>
+              <el-button :disabled="loggedUser.user_type !== 1" @click="confirmDeleteAutoPersonal(scope.row.id)" type="danger" circle>
                 <el-tooltip class="item" effect="dark" content="Excluir Notificação"
                             placement="top-start">
                   <i class="el-icon-delete"></i>
@@ -228,7 +228,7 @@
                 </el-tooltip>
               </el-button>
 
-              <el-button @click="confirmDeleteAutoPersonal(scope.row.id, false)" type="danger" circle>
+              <el-button :disabled="loggedUser.user_type !== 1" @click="confirmDeleteAutoPersonal(scope.row.id, false)" type="danger" circle>
                 <el-tooltip class="item" effect="dark" content="Excluir Notificação"
                             placement="top-start">
                   <i class="el-icon-delete"></i>
@@ -352,6 +352,7 @@ import AutoPersonal from "@/components/notifications/AutoPersonal.vue";
 import Intoxication from "@/components/notifications/Intoxication.vue";
 import EditPatient from "@/components/patient/EditPatient.vue";
 import axios from "axios";
+import {UserModel} from "@/models/UserModel";
 
 
 @Component({
@@ -376,6 +377,8 @@ export default class ListPatient extends Vue {
   $refs!: {
     form: VForm
   }
+  loggedUser: UserModel
+
   patients: PatientModel[] = []
   content: any = null
   page = 1
@@ -407,6 +410,7 @@ export default class ListPatient extends Vue {
   intoxicationLoading = false
 
   created() {
+    this.loggedUser = this.$store.state.user
     this.fetchPatients();
   }
 
@@ -781,6 +785,14 @@ export default class ListPatient extends Vue {
       background: 'rgba(255,255,255,0.7)'
     });
   }
+
+  hasPermission(permission): boolean {
+    const permissionNumber = permission === 'doctor' ? 2 : 3
+    const permissionsAllowed = [1, permissionNumber]
+
+
+    return permissionsAllowed.includes(this.loggedUser?.user_type)
+  }
 }
 </script>
 
@@ -831,4 +843,12 @@ h1 {
   font-weight: bold;
   margin: 1rem 0;
 }
+
+.disabled-action {
+  cursor: no-drop;
+  pointer-events: none;
+  opacity: 0.4;
+
+}
+
 </style>
