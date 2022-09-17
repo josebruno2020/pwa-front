@@ -766,8 +766,8 @@ export default class AutoPersonal extends Mixins<LoadingMixin>(LoadingMixin) {
 
   isEdit = false
 
-
-  created() {
+  setInformation(patient: PatientModel) {
+    this.patient = patient
     this.model = {
       _03: this.now.toLocaleDateString()?.split('/')?.reverse()?.join('-'),
       _04: 'PR',
@@ -778,14 +778,7 @@ export default class AutoPersonal extends Mixins<LoadingMixin>(LoadingMixin) {
       _59: [],
       _61: [],
       _65: [],
-      name: this.user.name
-    }
-  }
-
-  setInformation(patient: PatientModel) {
-    this.patient = patient
-    this.model = {
-      ...this.model,
+      name: this.user.name,
       patient_id: this.patient.id,
       _10: this.patient.name,
       _11: this.patient.birthdate,

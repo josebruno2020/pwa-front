@@ -681,25 +681,14 @@ export default class Intoxication extends Mixins<LoadingMixin>(LoadingMixin) {
   isEdit = false
 
 
-
-  created() {
+  setInformation(patient:PatientModel) {
+    this.patient = patient
     this.model = {
       _03: this.now.toLocaleDateString()?.split('/')?.reverse()?.join('-'),
       _04: 'PR',
       _12: [],
       _30: 'Brasil',
       _48: 'Brasil',
-      _50: [{value: ''}],
-      _5005: [{ value: ''}],
-      _52: [{ value: '' }],
-      _54: [{ value: '' }],
-    }
-  }
-
-  setInformation(patient:PatientModel) {
-    this.patient = patient
-    this.model = {
-      ...this.model,
       patient_id: this.patient.id,
       _08: this.patient.name,
       _09: this.patient.birthdate,
@@ -710,7 +699,11 @@ export default class Intoxication extends Mixins<LoadingMixin>(LoadingMixin) {
       _21: this.patient.street,
       _22: this.patient.number,
       _28: this.patient.phone_number,
-      name: this.user.name
+      name: this.user.name,
+      _50: [{value: ''}],
+      _5005: [{ value: ''}],
+      _52: [{ value: '' }],
+      _54: [{ value: '' }],
     }
 
     this.isEdit = false
