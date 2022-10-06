@@ -1,5 +1,6 @@
 <template>
   <ul class="chat">
+    <infinite-loading direction="top" @infinite="infiniteHandler"></infinite-loading>
     <li class="left clearfix" v-for="(message, index) in allMessages" :key="index">
       <div class="clearfix user-message" :class="{'right': loggedUser.id === message.user_from.id}">
         <div class="header user">
@@ -22,12 +23,17 @@
 <script>
 import {httpPut} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
+import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   name: "ChatMessages",
   props: ["messages", "loggedUser", "userTarget"],
+  components: {
+    InfiniteLoading,
+  },
   data: () => ({
-    oldUsername: ''
+    oldUsername: '',
+    page: 1
   }),
 
   computed: {
@@ -55,11 +61,8 @@ export default {
   },
 
   methods: {
-    isToday(day) {
-      console.log(day)
-      const date = new Date().toLocaleString().split(' ')[0]
-
-      return day === date;
+    async infiniteHandler() {
+      //TODO get messages
     },
 
     async updateUnread() {
