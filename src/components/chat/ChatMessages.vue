@@ -1,6 +1,9 @@
 <template>
+
   <ul class="chat">
-    <infinite-loading direction="top" @infinite="infiniteHandler"></infinite-loading>
+    <infinite-loading v-if="messages.length >= 10" direction="top" @infinite="fetchMessages">
+      <div slot="no-more"></div>
+    </infinite-loading>
     <li class="left clearfix" v-for="(message, index) in allMessages" :key="index">
       <div class="clearfix user-message" :class="{'right': loggedUser.id === message.user_from.id}">
         <div class="header user">
@@ -21,7 +24,7 @@
 </template>
 
 <script>
-import {httpPut} from "@/services/http";
+import {httpGet, httpPut} from "@/services/http";
 import {apiRoutes} from "@/services/apiRoutes";
 import InfiniteLoading from 'vue-infinite-loading';
 
@@ -33,7 +36,7 @@ export default {
   },
   data: () => ({
     oldUsername: '',
-    page: 1
+    page: 2
   }),
 
   computed: {
@@ -51,18 +54,35 @@ export default {
     }
   },
 
-
+  mounted() {
+    this.page = 2
+  },
 
   updated() {
-    const chat = document.querySelector('.chat');
-    chat.scrollTop = chat.scrollHeight
-
-    document.querySelector('#btn-chat').focus = true
+   document.querySelector('#btn-chat').focus = true
   },
 
   methods: {
-    async infiniteHandler() {
-      //TODO get messages
+    async fetchMessages($state) {
+      try {
+        const {data} = await httpGet(`${apiRoutes.chatMessages}?user_to=${this.userTarget.id}&page=${this.page}`)
+        this.page += 1
+        if (!data.content.data.length) {
+          $state.complete();
+          return
+        }
+        const messages = data.content.data?.reverse()?.map(message => ({
+          ...message,
+          is_send: true
+        }));
+        this.$emit('updateMessages', messages);
+        $state.loaded();
+      } catch (err) {
+        this.$notify.error({
+          title: 'Erro!',
+          message: 'Não foi possível buscar as mensagens'
+        })
+      }
     },
 
     async updateUnread() {
@@ -75,7 +95,14 @@ export default {
           console.log(err)
         }
       }
-    }
+    },
+
+    scrollBottom() {
+      const chat = document.querySelector('.chat');
+      chat.scrollTop = chat.scrollHeight
+
+
+    },
   }
 }
 </script>

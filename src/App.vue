@@ -33,7 +33,13 @@
             <div class="card-header"><span class="name-user"><strong>{{ userTo.name }}</strong></span> @</div>
             <div class="card-body">
               <el-skeleton v-if="chatLoading" :rows="6" animated/>
-              <chat-messages :messages="chatMessages" :user-target="userTo" :logged-user="loggedUser"></chat-messages>
+              <chat-messages
+                  ref="chatMessages"
+                  @updateMessages="updateMessages($event)"
+                  :messages="chatMessages"
+                  :user-target="userTo"
+                  :logged-user="loggedUser"
+              ></chat-messages>
             </div>
             <div class="card-footer">
               <chat-form @messagesent="addMessage" :user="$store.state.user"></chat-form>
@@ -115,7 +121,7 @@ export default {
 
   methods: {
     async connectChannel() {
-      if (this.logged && !this.isChannelConnected){
+      if (this.logged && !this.isChannelConnected) {
 
         try {
           const {data} = await httpGet(apiRoutes.chatUnread);
@@ -138,53 +144,42 @@ export default {
 
 
         window.Echo.channel('chat' + this.loggedUser.id)
-          .listen('Chat', (event) => {
-            const obj = event.message;
-            console.log(obj)
-            const userFromId = obj.user_from.id;
+            .listen('Chat', (event) => {
+              const obj = event.message;
+              const userFromId = obj.user_from.id;
 
-            let mensagemLida = true;
+              let mensagemLida = true;
 
-            // verificar se ele está no chat.
-            if (userFromId !== this.userTo.id) {
-              mensagemLida = false
-              this.messagesWithoutRead.push(userFromId)
-              this.$notify.info({
-                title: `${obj.user_from.name}`,
-                message: `${obj.message}`,
-                onClick: () => {
-                  this.isShowChat = true
-                  return this.createChatWindow(obj.user_from);
-                }
-              })
-            }
+              // verificar se ele está no chat.
+              if (userFromId !== this.userTo.id) {
+                mensagemLida = false
+                this.messagesWithoutRead.push(userFromId)
+                this.$notify.info({
+                  title: `${obj.user_from.name}`,
+                  message: `${obj.message}`,
+                  onClick: () => {
+                    this.isShowChat = true
+                    return this.createChatWindow(obj.user_from);
+                  }
+                })
+              }
 
-            this.messages.push({
-              message: obj.message,
-              user_from: obj.user_from,
-              user_to: obj.user_to,
-              created_at: obj.created_at,
-              chat_id: obj.chat_id,
-              read: mensagemLida,
-              is_send: true
+              this.messages.push({
+                message: obj.message,
+                user_from: obj.user_from,
+                user_to: obj.user_to,
+                created_at: obj.created_at,
+                chat_id: obj.chat_id,
+                read: mensagemLida,
+                is_send: true
+              });
             });
-          });
       }
-    },
-
-    disabledMenu() {
-      return this.$refs.menu.showMenu = false
     },
 
     openChat() {
       this.isShowChat = true
       this.getUsers();
-    },
-
-    openUserToChat() {
-      this.$message({
-        message: 'mensagem'
-      })
     },
 
 
@@ -202,8 +197,6 @@ export default {
     },
 
     async addMessage(message) {
-      console.log(message)
-
       const id_front = (Math.random() + 1).toString(36).substring(3)
 
       const chatMessage = {
@@ -224,12 +217,15 @@ export default {
 
       this.messages.push(messageMapped);
 
+      this.$nextTick(() => {
+        this.$refs['chatMessages'].scrollBottom();
+      })
+
       try {
         const {data} = await httpPost(apiRoutes.chat, chatMessage);
 
         //backend data
 
-        //melhorar id que seja comum no front e no back
         const sendMessage = this.messages.find(message => message.id_front === data.content.id_front)
         sendMessage.is_send = true
         sendMessage.created_at = data.content.created_at
@@ -241,6 +237,9 @@ export default {
           message: 'Mensagem não enviada... tente novamente mais tarde.'
         })
       }
+      this.$nextTick(() => {
+        this.$refs['chatMessages'].scrollBottom();
+      })
     },
 
 
@@ -250,13 +249,17 @@ export default {
       this.userTo = userTo
       this.getUsers()
       await this.fetchMessages()
+      this.$nextTick(() => {
+        this.$refs['chatMessages'].scrollBottom();
+      })
     },
 
     async fetchMessages() {
       try {
         this.chatLoading = true
         const {data} = await httpGet(`${apiRoutes.chatMessages}?user_to=${this.userTo.id}`)
-        this.messages = data.content?.map(message => ({
+
+        this.messages = data.content?.data?.reverse()?.map(message => ({
           ...message,
           is_send: true
         }));
@@ -270,6 +273,11 @@ export default {
         this.chatLoading = false
       }
     },
+
+
+    updateMessages(messages) {
+      this.messages = messages.concat(this.messages)
+    }
   }
 
 
