@@ -1,16 +1,18 @@
 <template>
   <ul class="chat">
     <li class="left clearfix" v-for="(message, index) in allMessages" :key="index">
-      <div class="clearfix user-message" :class="{'right': loggedUser.id === message.user.id}">
+      <div class="clearfix user-message" :class="{'right': loggedUser.id === message.user_from.id}">
         <div class="header user">
         </div>
-        <div class="message-back" :class="loggedUser.id === message.user.id ? 'logged-back' : 'other-back'">
-            <span class="message">
+        <div class="message-back" :class="loggedUser.id === message.user_from.id ? 'logged-back' : 'other-back'">
+            <span :class="`message ${!message.is_send ? 'not-send' : ''} `">
               {{ message.message }}
             </span>
         </div>
         <div class="div-time">
-          <span class="time text-black-50">{{ message.created_at }}</span>
+          <span class="time text-black-50" v-if="message.created_at">
+            {{ new Date(message.created_at).toLocaleString() }}
+          </span>
         </div>
       </div>
     </li>
@@ -18,6 +20,9 @@
 </template>
 
 <script>
+import {httpPut} from "@/services/http";
+import {apiRoutes} from "@/services/apiRoutes";
+
 export default {
   name: "ChatMessages",
   props: ["messages", "loggedUser", "userTarget"],
@@ -34,8 +39,10 @@ export default {
     }
   },
 
-  mounted() {
-    console.log(this.messages)
+  watch: {
+    messages() {
+      this.updateUnread();
+    }
   },
 
 
@@ -54,6 +61,18 @@ export default {
 
       return day === date;
     },
+
+    async updateUnread() {
+      if (this.messages.length) {
+        try {
+          await httpPut(apiRoutes.chatUnread, {
+            user_from: this.userTarget.id
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      }
+    }
   }
 }
 </script>
@@ -116,5 +135,10 @@ li {
 
 .div-time {
   margin-bottom: .5rem;
+}
+
+.not-send {
+  opacity: .3;
+  background: #edffe9;
 }
 </style>

@@ -2,27 +2,29 @@
   <div id="app">
     <menu-interface ref="menu" class="menu" v-if="logged"></menu-interface>
     <router-view class="page-view"/>
-      <el-button
-          v-if="logged"
-          id="chat-button"
-          @click="openChat()"
-          type="info"
-          icon="el-icon-chat-line-round"
-          circle
-          plain>
-        <span v-if="messagesWithoutRead.length" class="text-primary">{{  messagesWithoutRead.length  }}</span>
-      </el-button>
+    <el-button
+        v-if="logged"
+        id="chat-button"
+        @click="openChat()"
+        type="info"
+        icon="el-icon-chat-line-round"
+        circle
+        plain>
+      <span v-if="messagesWithoutRead.length" class="text-primary">{{ messagesWithoutRead.length }}</span>
+    </el-button>
     <el-dialog v-if="logged" title="Sala de chat"
                :visible.sync="isShowChat"
                width="90%"
-    @close="userTo = {id: null}; isShowChat = false">
+               @close="userTo = {id: null}; isShowChat = false">
       <div class="row chat-room">
         <div class="col-md-2">
           <ul class="list-group">
             <li v-for="(user, index) in users" :key="index" @click="createChatWindow(user)"
                 class="list-group-item user-item" :class="{'user-active': userTo.id === user.id}" :id="user.id"
                 :value="user.name"><span>{{ user.name }}</span>
-              <el-badge v-if="messagesWithoutRead.includes(user.id)" :value="messagesWithoutRead.filter(id => id === user.id).length" class="item" type="primary"></el-badge>
+              <el-badge v-if="messagesWithoutRead.includes(user.id)"
+                        :value="messagesWithoutRead.filter(id => id === user.id).length" class="item"
+                        type="primary"></el-badge>
             </li>
           </ul>
         </div>
@@ -30,6 +32,7 @@
           <div class="card">
             <div class="card-header"><span class="name-user"><strong>{{ userTo.name }}</strong></span> @</div>
             <div class="card-body">
+              <el-skeleton v-if="chatLoading" :rows="6" animated/>
               <chat-messages :messages="chatMessages" :user-target="userTo" :logged-user="loggedUser"></chat-messages>
             </div>
             <div class="card-footer">
@@ -59,10 +62,14 @@ export default {
 
     loggedUser: null,
 
+    isChannelConnected: false,
+
     users: [],
     userTo: {
       id: null
     },
+
+    chatLoading: true,
 
     messagesWithoutRead: []
   }),
@@ -77,19 +84,16 @@ export default {
     chatMessages() {
       if (this.loggedUser) {
         return this.messages.filter(message => {
-          let chatIdArray = message.chatId.split('-')
+          let chatIdArray = message.chat_id.split('-')
           return (Number(chatIdArray[0]) === this.loggedUser?.id && Number(chatIdArray[1]) === this.userTo?.id) ||
               (Number(chatIdArray[0]) === this.userTo?.id && Number(chatIdArray[1]) === this.loggedUser?.id)
-          })
+        })
       }
 
       return []
-      
+
     },
 
-    // totalMessagesWithoutRead() {
-    //   return
-    // }
   },
   created() {
     if (this.$store.state.token) {
@@ -99,65 +103,87 @@ export default {
     }
   },
 
-  mounted() {
-    window.Echo.channel('chat' + this.loggedUser.id)
-        .listen('ChatMessage', (event) => {
-          console.log(event)
-
-          const obj = event.messageArray;
-          const userFromId = obj.fromUserId;
-
-          let mensagemLida = true
-
-
-          // verificar se ele está no chat.
-          if (userFromId !== this.userTo.id) {
-            console.log('nao estou no chat')
-            mensagemLida = false
-            this.messagesWithoutRead.push(userFromId)
-            this.$notify.info({
-              title: `${obj.user.name}`,
-              message: `${obj.message}`,
-              onClick: () => {
-                this.isShowChat = true
-                return this.createChatWindow(obj.user);
-              }
-            })
-          }
-
-          this.messages.push({
-            message: obj.message,
-            user: obj.user,
-            created_at: new Date(obj.created_at).toLocaleString(),
-            day: new Date(obj.created_at).toLocaleString().split(' ')[0],
-            chatId: obj.chatId,
-            read: mensagemLida
-          });
-        });
-  },
 
   updated() {
     if (this.$store.state?.token) {
-      // this.getUsers();
+      this.loggedUser = this.$store.state.user
+      this.connectChannel()
       return this.logged = true;
-
     }
     this.logged = false;
-    // return this.$router.push({name: 'login'})
   },
 
   methods: {
+    async connectChannel() {
+      if (this.logged && !this.isChannelConnected){
+
+        try {
+          const {data} = await httpGet(apiRoutes.chatUnread);
+          data.content?.forEach(chat => {
+
+            if (this.messagesWithoutRead.filter(id => id === chat.user_from).length === chat.unread) {
+              return
+            }
+
+            for (let i = 0; i < chat?.unread; i++) {
+              this.messagesWithoutRead.push(chat?.user_from);
+            }
+
+          })
+        } catch (err) {
+          console.log(err)
+        }
+
+        this.isChannelConnected = true
+
+
+        window.Echo.channel('chat' + this.loggedUser.id)
+          .listen('Chat', (event) => {
+            const obj = event.message;
+            console.log(obj)
+            const userFromId = obj.user_from.id;
+
+            let mensagemLida = true;
+
+            // verificar se ele está no chat.
+            if (userFromId !== this.userTo.id) {
+              mensagemLida = false
+              this.messagesWithoutRead.push(userFromId)
+              this.$notify.info({
+                title: `${obj.user_from.name}`,
+                message: `${obj.message}`,
+                onClick: () => {
+                  this.isShowChat = true
+                  return this.createChatWindow(obj.user_from);
+                }
+              })
+            }
+
+            this.messages.push({
+              message: obj.message,
+              user_from: obj.user_from,
+              user_to: obj.user_to,
+              created_at: obj.created_at,
+              chat_id: obj.chat_id,
+              read: mensagemLida,
+              is_send: true
+            });
+          });
+      }
+    },
+
     disabledMenu() {
       return this.$refs.menu.showMenu = false
     },
 
     openChat() {
       this.isShowChat = true
+      this.getUsers();
     },
 
     openUserToChat() {
       this.$message({
-        message: 'Enganei voce, seu bobo KKKK'
+        message: 'mensagem'
       })
     },
 
@@ -168,38 +194,82 @@ export default {
         this.users = data.content;
       } catch (err) {
         console.log('error pegar os usuarios.');
+        this.$notify.error({
+          title: 'Erro!',
+          message: 'Não foi possível buscar os usuários.'
+        })
       }
+    },
+
+    async addMessage(message) {
+      console.log(message)
+
+      const id_front = (Math.random() + 1).toString(36).substring(3)
+
+      const chatMessage = {
+        message: message.message,
+        user_to: this.userTo.id,
+        id_front
+      }
+
+      const messageMapped = {
+        message: message.message,
+        user_from: this.loggedUser,
+        created_at: '',
+        user_to: this.userTo,
+        chat_id: `${this.loggedUser.id}-${this.userTo.id}`,
+        is_send: false,
+        id_front
+      }
+
+      this.messages.push(messageMapped);
+
+      try {
+        const {data} = await httpPost(apiRoutes.chat, chatMessage);
+
+        //backend data
+
+        //melhorar id que seja comum no front e no back
+        const sendMessage = this.messages.find(message => message.id_front === data.content.id_front)
+        sendMessage.is_send = true
+        sendMessage.created_at = data.content.created_at
+      } catch (err) {
+        console.log(err)
+        this.messages = this.messages.filter(message => message.id_front !== id_front)
+        this.$notify.error({
+          title: 'Erro!',
+          message: 'Mensagem não enviada... tente novamente mais tarde.'
+        })
+      }
+    },
+
+
+    async createChatWindow(userTo) {
+      this.messages = []
+      this.messagesWithoutRead = this.messagesWithoutRead.filter(id => id !== userTo.id);
+      this.userTo = userTo
+      this.getUsers()
+      await this.fetchMessages()
     },
 
     async fetchMessages() {
-      //TODO get messages com o chatId quando clicar no chat.
-    },
-
-    async addMessage(obj) {
-      const data = {
-        message: obj.message,
-        userId: this.userTo.id,
-        name: this.loggedUser.name,
-        id: this.userTo.id,
-        created_at: new Date().toLocaleString(),
-        day: new Date(obj.created_at).toLocaleString().split(' ')[0],
-        user: obj.user,
-
-        fromUserId: this.loggedUser.id,
-        targetUserId: this.userTo.id,
-        chatId: `${this.userTo.id}-${this.loggedUser.id}`
+      try {
+        this.chatLoading = true
+        const {data} = await httpGet(`${apiRoutes.chatMessages}?user_to=${this.userTo.id}`)
+        this.messages = data.content?.map(message => ({
+          ...message,
+          is_send: true
+        }));
+      } catch (err) {
+        console.log(err)
+        this.$notify.error({
+          title: 'Erro!',
+          message: 'Não foi possível buscar as mensagens'
+        })
+      } finally {
+        this.chatLoading = false
       }
-      console.log(data)
-      this.messages.push(data);
-      await httpPost(apiRoutes.chat, data)
     },
-
-
-    createChatWindow(userTo) {
-      this.messagesWithoutRead = this.messagesWithoutRead.filter(id => id !== userTo.id);
-      // TODO fetch messensagens de acordo com o chat-id pelo backend.
-      this.userTo = userTo
-    }
   }
 
 
@@ -260,6 +330,7 @@ label
 
 .card-header
   background: #f4f2f8 !important
+
   .name-user
     font-size: 1rem
 </style>
