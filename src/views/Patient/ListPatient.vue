@@ -10,15 +10,21 @@
         </div>
         <el-row class="row-search">
           <el-input placeholder="Buscar cliente...." v-model="patientSearch" @keydown.native.enter="fetchPatients">
+            <el-select  slot="prepend" v-model="patientStatus">
+              <el-option :value="1" label="EM OBSERVAÇÃO"/>
+              <el-option :value="4" label="EM ALTA"/>
+            </el-select>
             <el-button slot="append" icon="el-icon-search" @click="fetchPatients"></el-button>
           </el-input>
+
         </el-row>
         <el-card shadow="hover">
           <el-table
               v-loading="loading"
               :data="patients"
               style="width: 100%"
-              empty-text="Nenhum registro">
+              empty-text="Nenhum registro"
+              :row-class-name="tableRowClassName">
             <el-table-column
                 prop="name"
                 label="Nome">
@@ -382,6 +388,7 @@ export default class ListPatient extends Vue {
   patients: PatientModel[] = []
   content: any = null
   page = 1
+  patientStatus = 1
 
   public patientSearch = ''
   loading = true
@@ -415,10 +422,13 @@ export default class ListPatient extends Vue {
   }
 
   private async fetchPatients() {
-    console.log(this.patientSearch)
     this.loading = true
     try {
-      const {data: {content}} = await httpGet(apiRoutes.patients, {page: this.page, search: this.patientSearch});
+      const {data: {content}} = await httpGet(apiRoutes.patients, {
+        page: this.page,
+        search: this.patientSearch,
+        status: this.patientStatus
+      });
       this.patients = content.data;
       this.content = content
     } catch (e: any) {
@@ -434,6 +444,13 @@ export default class ListPatient extends Vue {
   changePage(newPage) {
     this.page = newPage
     return this.fetchPatients();
+  }
+
+  tableRowClassName({row, rowIndex}) {
+    if(Number(rowIndex)/2 == 0) {
+      return 'warning-row'
+    }
+    return ''
   }
 
   showPatient(patient: PatientModel) {
@@ -849,6 +866,10 @@ h1 {
   pointer-events: none;
   opacity: 0.4;
 
+}
+
+.el-select {
+  width: 180px;
 }
 
 </style>

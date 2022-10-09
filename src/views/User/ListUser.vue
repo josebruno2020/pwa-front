@@ -13,7 +13,8 @@
             v-loading="loading"
             :data="users"
             style="width: 100%"
-            empty-text="Nenhum registro">
+            empty-text="Nenhum registro"
+            :row-class-name="tableRowClassName">
             <el-table-column
               prop="name"
               label="Nome">
@@ -113,6 +114,13 @@ export default class ListUser extends Mixins<LoadingMixin>(LoadingMixin) {
   changePage(newPage) {
     this.page = newPage
     return this.fetchUsers();
+  }
+
+  tableRowClassName({row, rowIndex}) {
+    if(Number(rowIndex)/2 == 0) {
+      return 'warning-row'
+    }
+    return ''
   }
 
   async editUser(user: UserModel) {
