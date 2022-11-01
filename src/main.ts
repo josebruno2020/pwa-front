@@ -56,7 +56,7 @@ window.Echo = new Echo({
   forceTLS: true,
   // wsPort: 6001,
   wssPort: 443,
-  wsHost: 'https://api.monintox.online',
+  wsHost: 'api.monintox.online',
   disableStats: true,
   encrypted: true,
   enabledTransports: ['ws', 'wss'],
