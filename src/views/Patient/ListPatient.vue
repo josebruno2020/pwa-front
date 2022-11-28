@@ -104,11 +104,11 @@
 
       <ul class="li-link">
         <li>
-          <span class="link blue" :class="!hasPermission('nurse') ? 'disabled-action' : ''" @click="openNurseReport(patient)">Adicionar Relatório de Enfermagem <i
+          <span class="link blue" @click="openNurseReport(patient)">Adicionar Relatório de Enfermagem <i
               class="el-icon-edit"></i></span>
         </li>
         <li>
-          <span class="link blue" :class="!hasPermission('doctor') ? 'disabled-action' : ''" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i
+          <span class="link blue" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i
               class="el-icon-edit"></i></span>
         </li>
         <li>
@@ -120,7 +120,6 @@
           <span class="link blue" @click="openChangeStatusModal(patient)">Mudar Status do Paciente <i
               class="el-icon-edit"></i></span>
         </li>
-
 
         <li>
           <span class="link blue" @click="openPatientEditModal(patient)">Editar Paciente<i class="el-icon-edit"></i></span>
@@ -801,14 +800,6 @@ export default class ListPatient extends Vue {
       spinner: 'el-icon-loading',
       background: 'rgba(255,255,255,0.7)'
     });
-  }
-
-  hasPermission(permission): boolean {
-    const permissionNumber = permission === 'doctor' ? 2 : 3
-    const permissionsAllowed = [1, permissionNumber]
-
-
-    return permissionsAllowed.includes(this.loggedUser?.user_type)
   }
 }
 </script>

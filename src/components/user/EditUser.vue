@@ -36,7 +36,7 @@
       </el-form-item>
 
       <el-form-item label="E-mail" prop="email">
-        <el-input v-model="user.email" disabled></el-input>
+        <el-input v-model="user.email"></el-input>
       </el-form-item>
 
       <div class="footer">
@@ -100,9 +100,14 @@ export default class EditUser extends Vue {
       return this.$emit('submit')
 
     } catch (err: any) {
+      let message = 'Não foi possivel atualiar o usuário'
+      console.log(err?.response?.status)
+      if (err?.response?.status === 422) {
+        message = 'E-mail já utilizado no sistema.'
+      }
       this.$notify.error({
         title: 'Erro!',
-        message: 'Não foi possivel atualiar o usuário'
+        message
       });
     } finally {
       this.loading = false;

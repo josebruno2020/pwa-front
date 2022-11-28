@@ -19,5 +19,9 @@ export const userType: userTypeInterface[] = [
     {
         type: 4,
         rol: 'HU'
+    },
+    {
+        type: 5,
+        rol: 'Técnico de Enfermagem'
     }
 ]
