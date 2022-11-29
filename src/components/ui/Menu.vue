@@ -1,7 +1,9 @@
 <template>
   <header class="header">
-    <h1 class="logo vertical-logo" alt="logo">Monintox</h1>
-    <el-menu :default-active="activeIndex"  class="el-menu-demo" mode="horizontal" @select="handleSelect">
+    <div class="header-logo">
+      <h1 class="logo vertical-logo" alt="logo">Monintox</h1>
+    </div>
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
       <el-menu-item index="1" @click="toRoute('home')">Início</el-menu-item>
       <el-submenu index="2" :default-openeds="subOpen">
         <template slot="title">Pacientes</template>
@@ -10,10 +12,11 @@
       </el-submenu>
       <el-submenu index="3" :default-openeds="subOpen">
         <template slot="title">Usuários</template>
-        <el-menu-item index="3-1" @click="toRoute('listPatient')">Listar</el-menu-item>
-        <el-menu-item index="3-2" v-if="loggedUser.user_type === 1" @click="toRoute('createPatient')">Cadastrar</el-menu-item>
+        <el-menu-item index="3-1" @click="toRoute('listUser')">Listar</el-menu-item>
+        <el-menu-item index="3-2" v-if="loggedUser.user_type === 1" @click="toRoute('createUser')">Cadastrar
+        </el-menu-item>
       </el-submenu>
-      <el-menu-item index="4"   @click="logout()">
+      <el-menu-item index="4" @click="logout()">
         <span class="logout-link">Sair</span>
       </el-menu-item>
     </el-menu>
@@ -31,7 +34,7 @@ import {Component, Vue} from "vue-property-decorator";
 
 export default class MenuInterface extends Vue {
   loggedUser = null
-  activeIndex =  '1'
+  activeIndex = '1'
   subOpen = []
 
   created() {
@@ -58,7 +61,9 @@ export default class MenuInterface extends Vue {
 </script>
 
 <style scoped>
-
+.header-logo {
+  background: #fff;
+}
 
 .vertical-logo {
   font-size: 1.7rem;
