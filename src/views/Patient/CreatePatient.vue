@@ -61,7 +61,7 @@
           </el-table>
 
           <div class="footer">
-            <el-button type="success" @click="confirmContinue()" :loading="loading" native-type="button">Continuar sem paciente
+            <el-button type="success" @click="confirmContinue()" :loading="loading" native-type="button">Cadastrar Novo Paciente
             </el-button>
           </div>
         </el-card>

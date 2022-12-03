@@ -90,6 +90,10 @@
               class="el-icon-view"></i></span>
         </li>
         <li>
+          <span class="link blue" @click="openNurseEvolutionHistory(patient)">Histórico de Evolução de Enfermagem <i
+              class="el-icon-view"></i></span>
+        </li>
+        <li>
           <span class="link blue" @click="openVitalSignsHistoryModal(patient)">Histórico Sinais Vitais <i
               class="el-icon-view"></i></span>
         </li>
@@ -109,6 +113,10 @@
         </li>
         <li>
           <span class="link blue" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i
+              class="el-icon-edit"></i></span>
+        </li>
+        <li>
+          <span class="link blue" @click="openNurseEvolutionReport(patient)">Adicionar Evolução de Enfermagem <i
               class="el-icon-edit"></i></span>
         </li>
         <li>
@@ -262,6 +270,13 @@
     </el-dialog>
 
     <el-dialog
+        title="Histórico de Evolução de Enfermagem"
+        :visible.sync="showNurseEvolutionHistoryModal"
+        width="90%">
+      <history-nurse-evolution-report ref="nurseEvolutionHistoryModal"/>
+    </el-dialog>
+
+    <el-dialog
         title="Histórico de Sinais Vitais"
         :visible.sync="showVitalSignsHistoryModal"
         width="90%">
@@ -287,6 +302,13 @@
         width="90%">
       <doctor-report ref="doctorReportModal" @submit="showDoctorReportModal = false"/>
     </el-dialog>
+    <el-dialog
+        title="Relatório Evolução de Enfermagem"
+        :visible.sync="showNurseEvolution"
+        width="90%">
+      <nurse-evolution ref="nurseEvolutionModal" @submit="showNurseEvolution = false"/>
+    </el-dialog>
+
     <el-dialog
         title="Doenças Pré-existentes"
         :visible.sync="showSicknessModal"
@@ -358,10 +380,14 @@ import Intoxication from "@/components/notifications/Intoxication.vue";
 import EditPatient from "@/components/patient/EditPatient.vue";
 import axios from "axios";
 import {UserModel} from "@/models/UserModel";
+import HistoryNurseEvolutionReport from "@/components/patient/report/HistoryNurseEvolutionReport.vue";
+import NurseEvolution from "@/components/patient/report/NurseEvolution.vue";
 
 
 @Component({
   components: {
+    NurseEvolution,
+    HistoryNurseEvolutionReport,
     PageTitle,
     NurseReport,
     HistoryNurseReport,
@@ -397,6 +423,7 @@ export default class ListPatient extends Vue {
   showDoctorReportModal = false
   showNurseReportHistoryModal = false
   showDoctorReportHistoryModal = false
+  showNurseEvolutionHistoryModal = false
   showSicknessModal = false
   showVitalSignsModal = false
   showVitalSignsHistoryModal = false
@@ -414,6 +441,8 @@ export default class ListPatient extends Vue {
 
   intoxicationNotifications: any[] = []
   intoxicationLoading = false
+
+  showNurseEvolution = false
 
   created() {
     this.loggedUser = this.$store.state.user
@@ -482,6 +511,13 @@ export default class ListPatient extends Vue {
     })
   }
 
+  async openNurseEvolutionReport(patient: PatientModel) {
+    this.showNurseEvolution = true
+    this.$nextTick(() => {
+      return this.$refs['nurseEvolutionModal'].setInformation(patient)
+    })
+  }
+
   async openNurseReportHistory(patient: PatientModel) {
     this.showNurseReportHistoryModal = true
 
@@ -496,6 +532,15 @@ export default class ListPatient extends Vue {
 
     this.$nextTick(() => {
       return this.$refs['doctorReportHistoryModal'].setInformation(patient)
+    })
+
+  }
+
+  async openNurseEvolutionHistory(patient: PatientModel) {
+    this.showNurseEvolutionHistoryModal = true
+
+    this.$nextTick(() => {
+      return this.$refs['nurseEvolutionHistoryModal'].setInformation(patient)
     })
 
   }

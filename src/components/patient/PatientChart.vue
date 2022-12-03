@@ -34,6 +34,21 @@
       </div>
       <div v-if="!chart.doctorReport.length">-</div>
 
+      <p class="subtitle bold pagebreak">Relatório Evolução de Enfermagem</p>
+      <div class="report" v-for="(report, index) in chart.evolution" :key="'A'+index">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>Doutor(a): <strong>{{ report.user.name }}</strong></span>
+            <span style="float: right; padding: 3px 0" type="text"><strong>{{ formatDate(report.created_at) }}</strong>
+            </span>
+          </div>
+          <div class="report-body">
+            <p>{{ report.report }}</p>
+          </div>
+        </el-card>
+      </div>
+      <div v-if="!chart.evolution.length">-</div>
+
       <p class="subtitle bold pagebreak">Relatório de Sinais Vitais</p>
       <div class="report" v-for="(vital, index) in chart.vitalSigns" :key="'B'+index">
         <el-card class="box-card">
@@ -82,13 +97,13 @@ export default class PatientChart extends Mixins<DateMixin>(DateMixin, PrintMixi
   chart = {
     nurseReport: [],
     doctorReport: [],
-    vitalSigns: []
+    vitalSigns: [],
+    evolution: []
   }
   patient: PatientModel = new PatientModel()
   $htmlToPaper: any;
 
   async setInformation(patient: PatientModel) {
-    console.log('aqui')
     this.patient = patient
     await this.fetchReport();
   }
@@ -99,7 +114,8 @@ export default class PatientChart extends Mixins<DateMixin>(DateMixin, PrintMixi
     this.chart = {
       nurseReport: [],
       doctorReport: [],
-      vitalSigns: []
+      vitalSigns: [],
+      evolution: []
     }
     try {
       const {data} = await httpGet(`${apiRoutes.chart}/${this.patient.id}`)
