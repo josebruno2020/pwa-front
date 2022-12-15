@@ -654,7 +654,7 @@
 
       <div class="form-flex">
         <el-form-item  label="Observações Adicionais:">
-          <el-input v-model="model.obs" type="textarea" :rows="3"  maxlength="180" show-word-limit></el-input>
+          <el-input v-model="model.obs" type="textarea" :rows="3"  maxlength="450" show-word-limit></el-input>
         </el-form-item>
       </div>
 

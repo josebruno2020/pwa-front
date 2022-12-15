@@ -61,7 +61,8 @@ export default class ShowPatient extends Vue {
     this.patient = patient
   }
 
-  formatDate(date: string) {
+  formatDate(date: string|null) {
+    if (!date) return '';
     return americanToBrazilianFormat(date)
   }
 }
