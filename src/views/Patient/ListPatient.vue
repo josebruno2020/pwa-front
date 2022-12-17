@@ -75,6 +75,15 @@
       <h1>Infomações do Paciente</h1>
       <show-patient ref="showPatientModal"/>
 
+      <h1 class="patient-title">Conduta HUM</h1>
+
+      <ul class="li-link">
+        <li>
+          <span class="link blue" @click="openConduct(patient)">Conduta do Centro de Intoxicações do HUM<i
+              class="el-icon-edit"></i></span>
+        </li>
+      </ul>
+
       <h1 class="patient-title">Históricos</h1>
       <ul class="li-link">
         <li>
@@ -107,6 +116,7 @@
       <h1 class="patient-title">Ações</h1>
 
       <ul class="li-link">
+
         <li>
           <span class="link blue" @click="openNurseReport(patient)">Adicionar Relatório de Enfermagem <i
               class="el-icon-edit"></i></span>
@@ -256,6 +266,8 @@
 
     </el-dialog>
 
+
+
     <el-dialog
         title="Histórico de Relatório de Enfermagem"
         :visible.sync="showNurseReportHistoryModal"
@@ -288,6 +300,13 @@
         :visible.sync="showPatientChart"
         width="90%">
       <patient-chart ref="patientChartModal"/>
+    </el-dialog>
+
+    <el-dialog
+        title="Conduta do Centro de Intoxicações do HUM"
+        :visible.sync="showConductModal"
+        width="90%">
+      <conduct ref="conductModal" @submit="showConductModal = false"/>
     </el-dialog>
 
     <el-dialog
@@ -382,10 +401,12 @@ import axios from "axios";
 import {UserModel} from "@/models/UserModel";
 import HistoryNurseEvolutionReport from "@/components/patient/report/HistoryNurseEvolutionReport.vue";
 import NurseEvolution from "@/components/patient/report/NurseEvolution.vue";
+import Conduct from "@/components/patient/report/Conduct.vue";
 
 
 @Component({
   components: {
+    Conduct,
     NurseEvolution,
     HistoryNurseEvolutionReport,
     PageTitle,
@@ -420,6 +441,7 @@ export default class ListPatient extends Vue {
   patient: PatientModel = new PatientModel()
   showPatientModal = false
   showNurseReportModal = false
+  showConductModal = false
   showDoctorReportModal = false
   showNurseReportHistoryModal = false
   showDoctorReportHistoryModal = false
@@ -493,6 +515,15 @@ export default class ListPatient extends Vue {
 
     this.fetchAutoPersonalByPatient(patient)
     this.fetchIntoxicationByPatient(patient)
+  }
+
+  async openConduct(patient: PatientModel) {
+    this.showConductModal = true
+
+    this.$nextTick(() => {
+      return this.$refs['conductModal'].setInformation(patient)
+    })
+
   }
 
   async openNurseReport(patient: PatientModel) {
