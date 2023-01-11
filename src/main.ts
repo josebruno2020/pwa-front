@@ -53,13 +53,13 @@ window.Echo = new Echo({
   broadcaster: 'pusher',
   key: 'daf524e36b1c69c53fd3',
   cluster: 'sa1',
-  forceTLS: true,
-  wsPort: 6000,
-  // wssPort: 443,
-  wsHost: 'api.monintox.online',
-  disableStats: true,
   encrypted: true,
-  enabledTransports: ['ws', 'wss'],
+  wsHost: 'api.monintox.online',
+  wsPort: 6001,
+  wssPort: 6001,
+  forceTLS: true,
+  disableStats: true,
+  enabledTransports: ['ws', 'wss']
 });
 
 

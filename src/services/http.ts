@@ -2,6 +2,8 @@ import axios, {AxiosResponse} from 'axios';
 import store from "@/store";
 import router from "@/router";
 
+axios.defaults.withCredentials = true;
+
 const url = process.env.VUE_APP_API_URL;
 
 const http = axios.create({
