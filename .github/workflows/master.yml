@@ -38,10 +38,11 @@ jobs:
         with:
           name: dist
           path: dist
-      - name: Sync files to hosting
+      - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
           server: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
           server-dir: /var/www/html/monintox/html/
