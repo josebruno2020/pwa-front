@@ -62,4 +62,3 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           server-dir: monintox/html/
           local-dir: ./dist/
-          log-level: verbose
