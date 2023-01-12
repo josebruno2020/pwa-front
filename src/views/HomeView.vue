@@ -4,7 +4,7 @@
     <section class="home">
 
       <img alt="Vue logo" src="../assets/logo.png" class="logo">
-      <p v-if="loggedName" class="text-center">Seja bem-vindo, {{ loggedName }}</p>
+      <p v-if="loggedName" class="text-center">Seja bem-vindo(a), {{ loggedName }}</p>
 
       <div class="button">
         <router-link :to="{name: 'createPatient'}">
