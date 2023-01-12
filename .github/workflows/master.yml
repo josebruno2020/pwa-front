@@ -45,5 +45,5 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
-          method: ftps
-          remote_dir: /var/www/html/monintox/html/
+          protocol: ftps
+          server-dir: /var/www/html/monintox/html/
