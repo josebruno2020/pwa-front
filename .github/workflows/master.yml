@@ -45,11 +45,11 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@master
-      - name: Download artifact
-        uses: actions/download-artifact@master
-        with:
-          name: dist
-          path: dist
+#      - name: Download artifact
+#        uses: actions/download-artifact@master
+#        with:
+#          name: dist
+#          path: dist
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
