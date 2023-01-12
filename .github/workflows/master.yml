@@ -41,10 +41,10 @@ jobs:
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@2.0.0
         with:
-          server: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
+          ftp_server: ${{ secrets.SERVER_HOST }}
+          ftp_username: ${{ secrets.SERVER_USER }}
+          ftp_password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
-          protocol: ftps
-          server-dir: /var/www/html/monintox/html/
+          method: sftp
+          remote_dir: /var/www/html/monintox/html/
           args: --verbose
