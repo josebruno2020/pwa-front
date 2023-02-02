@@ -1,7 +1,7 @@
 <template>
   <main>
     <div id="print-nurse">
-      <h2 class="report-title">Relatório de Evolução de Enfermagem</h2>
+      <h2 class="report-title">Evolução de Enfermagem</h2>
       <p class="report-subtitle">Paciente: {{ patient.name }}</p>
       <el-skeleton v-if="loading" :rows="6" animated />
       <div class="report" v-for="(report, index) in reports" :key="index">

@@ -3,13 +3,14 @@
     <menu-interface ref="menu" class="menu" v-if="logged"></menu-interface>
     <router-view class="page-view"/>
     <el-button
+
         v-if="logged"
         id="chat-button"
         @click="openChat()"
-        type="info"
+        type="success"
         icon="el-icon-chat-line-round"
         circle
-        plain>
+        size="large">
       <span v-if="messagesWithoutRead.length" class="text-primary">{{ messagesWithoutRead.length }}</span>
     </el-button>
     <el-dialog v-if="logged" title="Sala de chat"
@@ -322,6 +323,11 @@ label
   position: fixed
   right: 2rem
   bottom: 2rem
+  width: 60px
+  height: 60px
+
+.el-icon-chat-line-round
+  width: 100%
 
 .row
   align-items: flex-start !important

@@ -12,8 +12,8 @@
         <el-input v-model="patient.name"></el-input>
       </el-form-item>
 
-      <el-form-item label="Data de Nascimento" prop="birthdate">
-        <el-input type="date" v-model="patient.birthdate"></el-input>
+      <el-form-item label="Data de Nascimento (dia/mes/ano)" prop="birthdate">
+        <el-input v-model="patient.birthdate" v-mask="'##/##/####'"></el-input>
       </el-form-item>
 
       <el-form-item label="Nome da Mãe" prop="name_mother">
@@ -124,6 +124,7 @@ export default class EditPatient extends Vue {
 
   setInformation(patient: PatientModel) {
     this.patient = patient
+    this.patient.birthdate = patient.birthdate.split('-').reverse().join('/')
   }
 
   close() {
@@ -144,13 +145,14 @@ export default class EditPatient extends Vue {
     this.patient.mobile_number = StringHelper.onlyNumbers(this.patient.mobile_number)
     this.patient.cpf = StringHelper.onlyNumbers(this.patient.cpf)
     this.patient.rg = StringHelper.onlyNumbers(this.patient.rg)
+    this.patient.birthdate = StringHelper.formatDate(this.patient.birthdate)
   }
 
 
   async savePatient() {
     try {
-      this.removeMaskFromModel();
-      await httpPut(`${apiRoutes.patients}/${this.patient.id}`, {
+      this.removeMaskFromModel();      
+      const{ data} = await httpPut(`${apiRoutes.patients}/${this.patient.id}`, {
         ...this.patient,
         is_choosed: false
       });
@@ -158,7 +160,7 @@ export default class EditPatient extends Vue {
         title: 'Sucesso!',
         message: 'Paciente atualizado com sucesso.'
       });
-      this.$emit('submit', this.patient)
+      this.$emit('submit', data.content)
     } catch (err: any) {
       console.log(err)
       this.$notify.error({

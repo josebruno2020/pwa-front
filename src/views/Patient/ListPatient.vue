@@ -91,15 +91,15 @@
               class="el-icon-view"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openNurseReportHistory(patient)">Histórico de Enfermagem <i
+          <span class="link blue" @click="openNurseReportHistory(patient)">Relatório de Enfermagem <i
               class="el-icon-view"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openDoctorReportHistory(patient)">Histórico Médico <i
+          <span class="link blue" @click="openDoctorReportHistory(patient)">Evolução Médica <i
               class="el-icon-view"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openNurseEvolutionHistory(patient)">Histórico de Evolução de Enfermagem <i
+          <span class="link blue" @click="openNurseEvolutionHistory(patient)">Evolução de Enfermagem <i
               class="el-icon-view"></i></span>
         </li>
         <li>
@@ -122,7 +122,7 @@
               class="el-icon-edit"></i></span>
         </li>
         <li>
-          <span class="link blue" @click="openDoctorReport(patient)">Adicionar Relatório Médico <i
+          <span class="link blue" @click="openDoctorReport(patient)">Adicionar Evolução Médica <i
               class="el-icon-edit"></i></span>
         </li>
         <li>
@@ -155,7 +155,7 @@
       <p class="subtitle">Violência Interpessoal/Autoprovocada</p>
       <ul class="li-link">
         <li>
-          <span @click="openAutoPersonal(patient)" class="link blue">Cadastro</span>
+          <span @click="openAutoPersonal(patient)" class="link blue">Preencher notificação</span>
         </li>
 
         <el-table
@@ -211,7 +211,7 @@
       <p class="subtitle">Intoxicação Exógena</p>
       <ul class="li-link">
         <li>
-          <span @click="openIntoxication(patient)" class="link blue">Cadastro</span>
+          <span @click="openIntoxication(patient)" class="link blue">Preencher notificação</span>
         </li>
 
         <el-table
@@ -269,20 +269,20 @@
 
 
     <el-dialog
-        title="Histórico de Relatório de Enfermagem"
+        title="Relatório de Enfermagem"
         :visible.sync="showNurseReportHistoryModal"
         width="90%">
       <history-nurse-report ref="nurseReportHistoryModal"/>
     </el-dialog>
     <el-dialog
-        title="Histórico de Relatório Médico"
+        title="Evolução Médica"
         :visible.sync="showDoctorReportHistoryModal"
         width="90%">
       <history-doctor-report ref="doctorReportHistoryModal"/>
     </el-dialog>
 
     <el-dialog
-        title="Histórico de Evolução de Enfermagem"
+        title="Evolução de Enfermagem"
         :visible.sync="showNurseEvolutionHistoryModal"
         width="90%">
       <history-nurse-evolution-report ref="nurseEvolutionHistoryModal"/>
@@ -316,7 +316,7 @@
       <nurse-report ref="nurseReportModal" @submit="showNurseReportModal = false"/>
     </el-dialog>
     <el-dialog
-        title="Relatório Médico"
+        title="Evolução Médica"
         :visible.sync="showDoctorReportModal"
         width="90%">
       <doctor-report ref="doctorReportModal" @submit="showDoctorReportModal = false"/>

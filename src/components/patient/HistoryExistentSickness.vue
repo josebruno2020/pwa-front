@@ -2,7 +2,7 @@
   <main class="history-main">
     <h2 class="history-title">Paciente: {{ patient.name }}</h2>
     <el-skeleton v-if="loading" :rows="6" animated />
-    <div v-if="sickness.sickness.length" class="sickness">
+    <div v-if="sickness.sickness && sickness.sickness.length" class="sickness">
       <h4 class="history-subtitle">Doenças Registradas:</h4>
       <ul v-for="(sick, index) in sickness.sickness.split(',')" :key="index">
         <li>{{ sick }}</li>

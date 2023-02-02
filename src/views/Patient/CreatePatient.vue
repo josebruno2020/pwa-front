@@ -19,8 +19,8 @@
               <el-input v-model="patient.name"></el-input>
             </el-form-item>
 
-            <el-form-item label="Data de Nascimento" prop="birthdate">
-              <el-input type="date" v-model="patient.birthdate" :disabled="patientChoosed"></el-input>
+            <el-form-item label="Data de Nascimento (dia/mes/ano)" prop="birthdate">
+              <el-input v-model="patient.birthdate" :disabled="patientChoosed" v-mask="'##/##/####'"></el-input>
             </el-form-item>
 
             <el-form-item label="Nome da Mãe" prop="name_mother">
@@ -100,7 +100,7 @@
               </el-select>
             </el-form-item>
             <div class="footer">
-              <el-button type="light" @click="back" :loading="loading" native-type="button">Voltar</el-button>
+              <!-- <el-button type="light" @click="back" :loading="loading" native-type="button">Voltar</el-button> -->
               <el-button type="success" :loading="loading" native-type="submit">Salvar</el-button>
             </div>
 
@@ -197,6 +197,7 @@ export default class CreatePatient extends Vue {
     this.patient.mobile_number = StringHelper.onlyNumbers(this.patient.mobile_number)
     this.patient.cpf = StringHelper.onlyNumbers(this.patient.cpf)
     this.patient.rg = StringHelper.onlyNumbers(this.patient.rg)
+    this.patient.birthdate = StringHelper.formatDate(this.patient.birthdate)
   }
 
 
