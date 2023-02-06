@@ -686,7 +686,6 @@ export default class Intoxication extends Mixins<LoadingMixin>(LoadingMixin) {
     this.model = {
       _03: this.now.toLocaleDateString()?.split('/')?.reverse()?.join('-'),
       _04: 'PR',
-      _12: [],
       _30: 'Brasil',
       _48: 'Brasil',
       patient_id: this.patient.id,
