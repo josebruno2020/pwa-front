@@ -3,7 +3,23 @@
     <div id="print-chart">
       <h2 class="report-title">Prontuário</h2>
       <p class="report-subtitle">Paciente: {{ patient.name }}</p>
-      <p class="subtitle bold">Relatório de Enfermagem</p>
+      <p class="subtitle bold ">Conduta do Centro de Intoxicações do HUM</p>
+      <el-skeleton v-if="loading" :rows="6" animated />
+      <div class="report" v-if="chart.conduct.length">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>Usuário(a): <strong>{{ chart.conduct[0].user.name }}</strong></span>
+            <span style="float: right; padding: 3px 0" type="text"><strong>{{ formatDate(chart.conduct[0].created_at) }}</strong>
+            </span>
+          </div>
+          <div class="report-body">
+            <p>{{ chart.conduct[0].conduct }}</p>
+          </div>
+        </el-card>
+      </div>
+      <div v-if="!chart.conduct.length">-</div>
+
+      <p class="subtitle bold pagebreak">Relatório de Enfermagem</p>
       <el-skeleton v-if="loading" :rows="6" animated />
       <div class="report" v-for="(report, index) in chart.nurseReport" :key="index">
         <el-card class="box-card">
@@ -98,7 +114,8 @@ export default class PatientChart extends Mixins<DateMixin>(DateMixin, PrintMixi
     nurseReport: [],
     doctorReport: [],
     vitalSigns: [],
-    evolution: []
+    evolution: [],
+    conduct: []
   }
   patient: PatientModel = new PatientModel()
   $htmlToPaper: any;
@@ -115,7 +132,8 @@ export default class PatientChart extends Mixins<DateMixin>(DateMixin, PrintMixi
       nurseReport: [],
       doctorReport: [],
       vitalSigns: [],
-      evolution: []
+      evolution: [],
+      conduct: []
     }
     try {
       const {data} = await httpGet(`${apiRoutes.chart}/${this.patient.id}`)
